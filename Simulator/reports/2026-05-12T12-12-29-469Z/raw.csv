@@ -1,0 +1,4 @@
+pairing_id,timing,buyer,mode,run_idx,kind,total_calendar_s,total_active_s,final_tier,dnf,dnf_reason_category,dnf_reason,final_mass,t1_entry_s,t1_active_s,t1_exit_mass
+ad-hoc,drift-light,idle-clicker,threshold,0,engagement-profile,,,1,Y,budget-exhausted,calendar budget exhausted at T1,800.00,0.00,600.00,8.0000e+2
+ad-hoc,drift-light,idle-clicker,threshold,1,engagement-profile,,,1,Y,budget-exhausted,calendar budget exhausted at T1,0.00,0.00,0.00,0.0000e+0
+ad-hoc,drift-light,idle-clicker,threshold,2,engagement-profile,,,1,Y,budget-exhausted,calendar budget exhausted at T1,800.00,0.00,600.00,8.0000e+2

@@ -1,0 +1,6 @@
+pairing_id,timing,buyer,mode,run_idx,kind,total_calendar_s,total_active_s,final_tier,dnf,dnf_reason_category,dnf_reason,final_mass,t1_entry_s,t2_entry_s,t3_entry_s,t4_entry_s,t5_entry_s,t1_active_s,t2_active_s,t3_active_s,t4_active_s,t5_active_s,t1_exit_mass,t2_exit_mass,t3_exit_mass,t4_exit_mass,t5_exit_mass
+p1,realistic-engaged,comp-hoarder,completion,0,engagement-profile,142949.90,5400.00,4,N,,,14612247.11,0.00,700.00,13687.52,142058.90,,0.00,3600.00,900.00,900.00,,3.5044e-2,1.3421e+5,3.1590e+6,,
+p1,realistic-engaged,comp-hoarder,completion,1,engagement-profile,66070.15,5400.00,4,N,,,93497386.99,0.00,700.00,39515.51,65178.15,,0.00,3600.00,900.00,900.00,,3.5044e-2,4.9675e+5,1.9022e+7,,
+p1,realistic-engaged,comp-hoarder,completion,2,engagement-profile,52509.92,6300.00,4,N,,,62302938.15,0.00,700.00,11370.89,51614.92,,0.00,3600.00,1800.00,900.00,,3.5044e-2,1.0168e+5,6.7282e+7,,
+p1,realistic-engaged,comp-hoarder,completion,3,engagement-profile,35947.51,5400.00,4,N,,,3449369.15,0.00,700.00,26218.78,35907.51,,0.00,3600.00,900.00,900.00,,3.5044e-2,3.1010e+5,4.9592e+5,,
+p1,realistic-engaged,comp-hoarder,completion,4,engagement-profile,68250.43,6300.00,5,N,,,21197023608.51,0.00,700.00,16881.31,67355.43,67783.43,0.00,3600.00,1800.00,,900.00,3.5044e-2,1.7904e+5,2.9774e+8,3.8290e+6,

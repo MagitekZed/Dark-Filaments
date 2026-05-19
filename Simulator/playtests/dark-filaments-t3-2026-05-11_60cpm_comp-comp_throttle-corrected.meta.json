@@ -1,0 +1,114 @@
+{
+  "source_filename": "dark-filaments-t1-2026-05-11T12-22-30.json",
+  "source_location": "C:/Users/gaara/Downloads/ (preserved untouched)",
+  "tier": 3,
+  "cpm_setting": 60,
+  "handoff_path": "completion -> completion",
+  "date_captured": "2026-05-11",
+  "mode_chain_from_skip": [
+    "completion",
+    "completion"
+  ],
+  "starting_mass_T3": 854.3015483625131,
+  "starting_cohesion_threshold_T3": 6.25,
+  "correction": {
+    "method": "Browser tab throttle correction. Each tick->tick gap > 2.5s was treated as a throttled wall-clock interval. Productive_dt within each gap was inferred from mass_after delta divided by mps_at_start, then the excess (raw_gap - productive_dt) was subtracted from all subsequent event timestamps so the timeline reflects productive (un-throttled) wall-clock only. Aggregate fields in the end event (cohesion_hit_ms, total_time_ms, completionist_extension_ms) and tier_snapshots t_ms fields were correspondingly remapped.",
+    "note": "Pause/resume events in the source already share t_ms (pause/resume durations excluded from t_ms by the logger), so no additional pause correction was needed beyond throttle handling.",
+    "throttle_windows": [
+      {
+        "raw_prev_t_ms": 2272614,
+        "raw_next_t_ms": 2300622,
+        "raw_gap_ms": 28008,
+        "productive_dt_ms": 1226,
+        "excess_ms": 26782
+      },
+      {
+        "raw_prev_t_ms": 2300622,
+        "raw_next_t_ms": 2360619,
+        "raw_gap_ms": 59997,
+        "productive_dt_ms": 1226,
+        "excess_ms": 58771
+      },
+      {
+        "raw_prev_t_ms": 2360619,
+        "raw_next_t_ms": 2420625,
+        "raw_gap_ms": 60006,
+        "productive_dt_ms": 1226,
+        "excess_ms": 58780
+      },
+      {
+        "raw_prev_t_ms": 2420625,
+        "raw_next_t_ms": 2480618,
+        "raw_gap_ms": 59993,
+        "productive_dt_ms": 1226,
+        "excess_ms": 58767
+      },
+      {
+        "raw_prev_t_ms": 2480618,
+        "raw_next_t_ms": 2540616,
+        "raw_gap_ms": 59998,
+        "productive_dt_ms": 1226,
+        "excess_ms": 58772
+      },
+      {
+        "raw_prev_t_ms": 2540616,
+        "raw_next_t_ms": 2600611,
+        "raw_gap_ms": 59995,
+        "productive_dt_ms": 1226,
+        "excess_ms": 58769
+      },
+      {
+        "raw_prev_t_ms": 2600611,
+        "raw_next_t_ms": 2660615,
+        "raw_gap_ms": 60004,
+        "productive_dt_ms": 1226,
+        "excess_ms": 58778
+      },
+      {
+        "raw_prev_t_ms": 2660615,
+        "raw_next_t_ms": 2720620,
+        "raw_gap_ms": 60005,
+        "productive_dt_ms": 1226,
+        "excess_ms": 58779
+      },
+      {
+        "raw_prev_t_ms": 2720620,
+        "raw_next_t_ms": 2780612,
+        "raw_gap_ms": 59992,
+        "productive_dt_ms": 1226,
+        "excess_ms": 58766
+      },
+      {
+        "raw_prev_t_ms": 2780612,
+        "raw_next_t_ms": 2783618,
+        "raw_gap_ms": 3006,
+        "productive_dt_ms": 1226,
+        "excess_ms": 1780
+      },
+      {
+        "raw_prev_t_ms": 3501618,
+        "raw_next_t_ms": 3526167,
+        "raw_gap_ms": 24549,
+        "productive_dt_ms": 1140,
+        "excess_ms": 23409
+      }
+    ],
+    "total_excess_ms_removed": 522153,
+    "total_excess_min_removed": 8.703
+  },
+  "raw_headline": {
+    "threshold_min": 28.818,
+    "completion_min": 58.825
+  },
+  "corrected_headline": {
+    "threshold_min": 28.818,
+    "completion_min": 50.123
+  },
+  "flags": [
+    "N=1 T3 playtest. Single data point; calibration band loose until more T3 data lands.",
+    "Effective CPM during the productive timeline averaged ~60 cpm (autoclicker setting).",
+    "The throttled wall-clock window between ~37:53 and ~46:21 of the source log (player tabbed away) totaled 8.93 min and was removed. Bot effectively paused during this window: clicks froze, mass advanced ~1.2s of productive time per 60s wake.",
+    "A separate 24.55s throttle gap near the very end was also removed.",
+    "Cohesion (Threshold) timing is unaffected by the correction because the throttle began after cohesion was reached."
+  ]
+}

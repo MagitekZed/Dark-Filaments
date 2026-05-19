@@ -1,0 +1,2 @@
+pairing_id,timing,buyer,mode,run_idx,kind,total_calendar_s,total_active_s,final_tier,dnf,dnf_reason_category,dnf_reason,final_mass,t1_entry_s,t2_entry_s,t1_active_s,t2_active_s,t1_exit_mass,t2_exit_mass
+p17,bot-60cpm,comp-hoarder,completion,0,continuous-bot,700.00,700.00,2,N,,,0.04,0.00,,0.00,,1.0062e+0,

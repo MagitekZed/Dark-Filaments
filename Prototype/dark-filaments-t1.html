@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Dark Filaments — T1 Prototype</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg-2: #121828;
+    --fg: #e8e6df;
+    --fg-dim: #8a8a96;
+    --fg-faint: #4a4d5a;
+    --accent: #d9b56b;        /* pale gold */
+    --accent-dim: #6b5a3a;
+    --consolidation-low: #2c4a6a;
+    --consolidation-high: #6ec0d9;  /* cool cyan */
+    --border: #20263a;
+    --danger-mute: #2a2a32;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, "Helvetica Neue", sans-serif;
+    font-size: 16px;
+    line-height: 1.4;
+    min-height: 100vh;
+  }
+
+  .wrap {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 18px 48px;
+  }
+
+  /* TABS */
+  .tab-bar {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 18px 18px 0;
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    background: transparent;
+    color: var(--fg-faint);
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    padding: 10px 18px;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: inherit;
+    transition: color 120ms ease, background 120ms ease, border-color 120ms ease;
+    position: relative;
+    bottom: -1px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tab-btn:hover { color: var(--fg-dim); background: rgba(255,255,255,0.02); }
+  .tab-btn.active {
+    color: var(--fg);
+    background: var(--bg);
+    border-color: var(--border);
+  }
+
+  /* Stub panels for tabs not yet implemented */
+  .tab-stub {
+    text-align: center;
+    color: var(--fg-faint);
+    font-style: italic;
+    padding: 80px 20px;
+    letter-spacing: 0.04em;
+  }
+
+  /* MASS — heartbeat of the game */
+  .mass-block {
+    text-align: center;
+    margin: 8px 0 24px;
+  }
+  .mass {
+    font-size: 64px;
+    font-weight: 200;
+    letter-spacing: 0.02em;
+    color: var(--fg);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .mass-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--fg-faint);
+    margin-top: 6px;
+  }
+
+  /* PULL */
+  .pull-block {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .pull-btn {
+    background: var(--bg-2);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 56px;
+    font-size: 22px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 80ms ease, transform 50ms ease, border-color 120ms ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    min-width: 220px;
+  }
+  .pull-btn:hover { background: #1a2238; border-color: #2c344a; }
+  .pull-btn:active { transform: scale(0.97); background: #232c46; }
+  .mpc-line {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--fg-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* CONSOLIDATION */
+  .consolidation-block {
+    margin: 0 auto 24px;
+    max-width: 460px;
+    text-align: center;
+  }
+  .consolidation-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--fg-faint);
+    margin-bottom: 6px;
+  }
+  .consolidation-value {
+    font-variant-numeric: tabular-nums;
+    font-size: 18px;
+    color: var(--fg);
+    margin-bottom: 8px;
+  }
+  .consolidation-bar {
+    height: 6px;
+    background: #161b2a;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .consolidation-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--consolidation-low);
+    transition: width 240ms ease, background 600ms ease, box-shadow 600ms ease;
+  }
+  /* Tier-up: lengthen the width transition so the compress-and-extend
+     animation (100% → new-tier entry ratio) reads as a deliberate gesture
+     rather than a snap. Applied for ~1.5 s by transitionToNextTier(). */
+  .consolidation-fill.tier-up {
+    transition: width 1400ms cubic-bezier(0.4, 0.0, 0.2, 1), background 600ms ease, box-shadow 600ms ease;
+  }
+  .consolidation-block.full .consolidation-fill {
+    background: var(--consolidation-high);
+    box-shadow: 0 0 18px rgba(110, 192, 217, 0.55);
+  }
+  .consolidation-block.full .consolidation-value {
+    color: var(--consolidation-high);
+  }
+
+  /* STATS */
+  .stats {
+    text-align: center;
+    color: var(--fg-dim);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 28px;
+  }
+  .stats span { margin: 0 10px; }
+  .stats strong { color: var(--fg); font-weight: 500; }
+
+  /* UPGRADES */
+  .upgrades {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  @media (min-width: 720px) {
+    .upgrades { grid-template-columns: 1fr 1fr; }
+  }
+  .upgrade {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto auto;
+    gap: 4px 12px;
+    align-items: center;
+  }
+  .u-name {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--fg);
+    letter-spacing: 0.02em;
+  }
+  .u-level {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--fg-faint);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  .u-desc {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    font-style: italic;
+    color: var(--fg-dim);
+    font-size: 13px;
+    line-height: 1.45;
+    margin: 2px 0 6px;
+  }
+  .u-buy-row {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .u-cost {
+    font-size: 13px;
+    color: var(--fg-dim);
+    font-variant-numeric: tabular-nums;
+  }
+  .u-cost.affordable { color: var(--accent); }
+  .u-cost.maxed { color: var(--fg-faint); text-transform: uppercase; letter-spacing: 0.14em; font-size: 11px; }
+  .buy-btn {
+    background: transparent;
+    color: var(--fg-dim);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 14px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    cursor: pointer;
+    transition: background 100ms ease, color 100ms ease, border-color 100ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .buy-btn.affordable {
+    color: var(--accent);
+    border-color: var(--accent-dim);
+  }
+  .buy-btn.affordable:hover { background: rgba(217, 181, 107, 0.08); }
+  .buy-btn:disabled { cursor: not-allowed; opacity: 0.5; }
+  .buy-btn:disabled:hover { background: transparent; }
+
+  .upgrade.maxed { opacity: 0.55; }
+
+  /* END TIER */
+  .end-block {
+    text-align: center;
+    margin: 8px 0 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+  }
+  .end-btn {
+    background: var(--danger-mute);
+    color: var(--fg-faint);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 36px;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: not-allowed;
+    transition: all 240ms ease;
+  }
+  .end-btn.ready {
+    background: rgba(110, 192, 217, 0.08);
+    color: var(--consolidation-high);
+    border-color: var(--consolidation-high);
+    cursor: pointer;
+    box-shadow: 0 0 22px rgba(110, 192, 217, 0.25);
+  }
+  .end-btn.ready:hover { background: rgba(110, 192, 217, 0.16); }
+
+  /* PAUSE — session-control sibling of the End Tier button */
+  .pause-btn {
+    background: transparent;
+    color: var(--fg-dim);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 28px;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 100ms ease, color 100ms ease, border-color 100ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pause-btn:hover { background: rgba(255,255,255,0.04); color: var(--fg); }
+  .pause-btn.paused {
+    color: var(--accent);
+    border-color: var(--accent-dim);
+    background: rgba(217, 181, 107, 0.08);
+  }
+  .pause-btn.paused:hover { background: rgba(217, 181, 107, 0.14); }
+
+  /* Faded play-area look while paused. The pause button itself stays full
+     opacity (it's the way out) — everything else dims so the freeze reads. */
+  #play.is-paused .mass-block,
+  #play.is-paused .pull-block,
+  #play.is-paused .consolidation-block,
+  #play.is-paused .stats,
+  #play.is-paused .upgrades,
+  #play.is-paused .dev-panel {
+    opacity: 0.55;
+    transition: opacity 200ms ease;
+  }
+
+  /* REPORT */
+  .report {
+    max-width: 640px;
+    margin: 32px auto;
+    padding: 28px 24px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .report h1 {
+    margin: 0 0 6px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    font-size: 22px;
+  }
+  .report .muted {
+    color: var(--fg-dim);
+    font-size: 13px;
+    margin-bottom: 22px;
+    font-style: italic;
+  }
+  .report-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 18px;
+    font-size: 14px;
+    margin-bottom: 22px;
+  }
+  .report-grid div:nth-child(odd) { color: var(--fg-dim); }
+  .report-grid div:nth-child(even) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg);
+  }
+  .report table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+  .report th, .report td {
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .report th { color: var(--fg-dim); font-weight: 400; font-size: 11px; text-transform: uppercase; letter-spacing: 0.14em; }
+  .report td:last-child, .report th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+  .completion {
+    font-size: 13px;
+    margin: 12px 0 18px;
+    padding: 12px 14px;
+    background: #0d1322;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+  }
+  .completion .row { display: flex; justify-content: space-between; padding: 3px 0; }
+  .completion .yes { color: var(--accent); }
+  .completion .no { color: var(--fg-faint); }
+  .copy-btn {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent-dim);
+    border-radius: 4px;
+    padding: 8px 18px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    cursor: pointer;
+  }
+  .copy-btn:hover { background: rgba(217, 181, 107, 0.08); }
+  .log-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* DEV TOOLS — visually demarcated from the game */
+  .dev-panel {
+    border-top: 1px dashed #1c2238;
+    padding: 12px 0 4px;
+    margin: 4px 0 22px;
+    text-align: center;
+  }
+  .dev-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--fg-faint);
+    margin-bottom: 8px;
+  }
+  .dev-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .dev-btn {
+    background: transparent;
+    color: var(--fg-dim);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 5px 11px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+    transition: background 100ms ease, color 100ms ease, border-color 100ms ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .dev-btn:hover { background: rgba(255,255,255,0.04); color: var(--fg); }
+  .dev-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .auto-toggle.on {
+    color: var(--consolidation-high);
+    border-color: var(--consolidation-high);
+    background: rgba(110, 192, 217, 0.08);
+  }
+  .cpm-input {
+    width: 72px;
+    padding: 5px 6px;
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    font-family: inherit;
+  }
+  .cpm-input:focus { outline: none; border-color: var(--accent-dim); }
+  .cpm-input::-webkit-outer-spin-button,
+  .cpm-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .cpm-input { -moz-appearance: textfield; }
+  /* Tier-skip selects share the `.cpm-input` shell for consistency, then
+     compact and label per-use. `.skip-select` (target) is auto-width — its
+     content is "T2".."T10". `.skip-mode-select` (one per prior tier) is a
+     pair of "T<i> Threshold" / "T<i> Completion" options shown as a compact
+     pill. Style stays in sync with the surrounding dev row aesthetic. */
+  .skip-select {
+    width: auto;
+    min-width: 56px;
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+  .skip-mode-select {
+    width: auto;
+    min-width: 92px;
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+  .dev-suffix {
+    font-size: 11px;
+    color: var(--fg-faint);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-left: 2px;
+  }
+  .log-content {
+    text-align: left;
+    background: #080c16;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-family: ui-monospace, "SF Mono", Menlo, Monaco, "Cascadia Mono", "Consolas", monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--fg-dim);
+    max-height: 280px;
+    overflow-y: auto;
+    margin: 10px 0 0;
+    white-space: pre;
+  }
+  .log-content .empty { color: var(--fg-faint); font-style: italic; }
+
+  /* SESSION REPORT — chart section (Phase 3D) */
+  .report-charts {
+    margin: 24px 0 4px;
+  }
+  .report-charts-heading {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--fg-faint);
+    margin: 0 0 10px;
+  }
+  .report-chart {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: block;
+    margin-bottom: 14px;
+  }
+  #r-chart-mass     { height: 220px; }
+  #r-chart-consolidation { height: 96px;  }
+  #r-chart-income   { height: 200px; }
+  #r-chart-levels   { height: 220px; }
+  #r-chart-cpm      { height: 220px; }
+  #r-chart-compare  { height: 220px; }
+  .report-chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    padding: 0 4px 14px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    color: var(--fg-dim);
+  }
+  .report-chart-legend .leg-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .report-chart-legend .leg-swatch {
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    border-radius: 1px;
+    flex: 0 0 auto;
+  }
+  .report-chart-legend .leg-name { color: var(--fg-dim); }
+  .report-chart-legend .leg-zero .leg-name { color: var(--fg-faint); }
+  .report-charts-divider {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 22px 0 18px;
+  }
+  .report-cmp-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px 14px;
+    padding: 10px 12px;
+    margin-top: 4px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .report-cmp-summary .cmp-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--fg-faint);
+  }
+  .report-cmp-summary .cmp-value {
+    font-size: 18px;
+    color: var(--fg);
+    font-weight: 300;
+  }
+  .report-cmp-summary .cmp-value.pos { color: #b07a7a; }
+  .report-cmp-summary .cmp-value.neg { color: var(--consolidation-high); }
+  .report-cmp-summary .cmp-value.neutral { color: var(--fg-dim); }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+  <div class="tab-bar" role="tablist" aria-label="Dark Filaments sections">
+    <button class="tab-btn" data-tab="parameters" role="tab" aria-selected="false">Parameters</button>
+    <button class="tab-btn" data-tab="simulator"  role="tab" aria-selected="false">Simulator</button>
+    <button class="tab-btn" data-tab="playtest"   role="tab" aria-selected="false">Playtest</button>
+  </div>
+
+  <div data-tab-panel="parameters" role="tabpanel">
+    <!-- Built up in src/ui/parameters.js on init(). Empty until then. -->
+  </div>
+
+  <div data-tab-panel="simulator" role="tabpanel">
+    <!-- Built up in src/ui/simulator.js on init(). Empty until then. -->
+  </div>
+
+  <div data-tab-panel="playtest" role="tabpanel">
+  <div class="wrap" id="play">
+    <div class="mass-block">
+      <div class="mass" id="mass">0.0</div>
+      <div class="mass-label">Mass</div>
+    </div>
+
+    <div class="pull-block">
+      <button class="pull-btn" id="pull-btn">Pull</button>
+      <div class="mpc-line">+<span id="mpc-display">1.00</span> per pull</div>
+    </div>
+
+    <div class="dev-panel">
+      <div class="dev-label">Dev — Autoclick</div>
+      <div class="dev-row">
+        <button class="dev-btn auto-toggle" id="auto-toggle">Off</button>
+        <button class="dev-btn" id="cpm-m10">−10</button>
+        <button class="dev-btn" id="cpm-m1">−1</button>
+        <input class="cpm-input" id="cpm-input" type="number" min="1" max="6000" step="1" value="100" inputmode="numeric">
+        <button class="dev-btn" id="cpm-p1">+1</button>
+        <button class="dev-btn" id="cpm-p10">+10</button>
+        <span class="dev-suffix">cpm</span>
+      </div>
+    </div>
+
+    <div class="dev-panel" id="skip-panel">
+      <div class="dev-label">Dev — Tier skip (replaces state)</div>
+      <div class="dev-row">
+        <span class="dev-suffix" style="margin-right:4px;">Target</span>
+        <select class="cpm-input skip-select" id="skip-target" title="Tier to drop into. Only tiers ahead of the current tier appear; backwards skipping isn't useful for accelerated playtesting. The handoff selectors below adapt to the chosen target."></select>
+        <span class="dev-suffix">Handoff</span>
+        <span id="skip-handoff-row" style="display:inline-flex; align-items:center; gap:6px; flex-wrap:wrap;"></span>
+        <button class="dev-btn skip-btn" id="skip-go" title="Discard the current live state and drop into the start of the target tier with the chosen per-tier handoff modes. For non-destructive forward progress, use Time skip below instead.">Skip</button>
+      </div>
+    </div>
+
+    <div class="dev-panel" id="dev-time-skip-panel">
+      <div class="dev-label">Dev — Time skip (offline accrual)</div>
+      <div class="dev-row">
+        <button class="dev-btn" id="time-skip-1h" title="Advance the universe 1 hour of pure-idle accrual">+1h</button>
+        <button class="dev-btn" id="time-skip-6h" title="Advance the universe 6 hours of pure-idle accrual">+6h</button>
+        <button class="dev-btn" id="time-skip-1d" title="Advance the universe 1 day of pure-idle accrual">+1d</button>
+        <button class="dev-btn" id="time-skip-3d" title="Advance the universe 3 days of pure-idle accrual">+3d</button>
+        <button class="dev-btn" id="time-skip-7d" title="Advance the universe 7 days of pure-idle accrual">+7d</button>
+      </div>
+      <div class="dev-row" style="margin-top:6px;">
+        <span class="dev-suffix">Custom</span>
+        <input class="cpm-input" id="time-skip-amount" type="number" min="0.1" max="720" step="1" value="6" inputmode="numeric">
+        <select class="cpm-input" id="time-skip-unit" title="Time unit">
+          <option value="h">hours</option>
+          <option value="d">days</option>
+        </select>
+        <button class="dev-btn skip-btn" id="time-skip-go" title="Skip the custom amount. Pure-idle accrual (no purchases). 30-day cap applies per call.">Skip</button>
+        <button class="dev-btn" id="force-save" title="Force an autosave write to localStorage right now.">Save now</button>
+      </div>
+      <div class="dev-row" style="margin-top:4px;">
+        <span class="dev-suffix" id="time-skip-status">Pure-idle accrual (no purchases). 30-day cap per call.</span>
+      </div>
+    </div>
+
+    <div class="consolidation-block" id="consolidation-block">
+      <div class="consolidation-label">Consolidation</div>
+      <div class="consolidation-value"><span id="consolidation-num">0.00</span> / <span id="consolidation-max">1.00</span></div>
+      <div class="consolidation-bar"><div class="consolidation-fill" id="consolidation-fill"></div></div>
+    </div>
+
+    <div class="stats">
+      <span>MPC <strong id="stat-mpc">1.00</strong></span>
+      <span>MPS <strong id="stat-mps">0.00</strong></span>
+      <span id="stat-aps-wrap" class="hidden">AC/s <strong id="stat-aps">0.00</strong></span>
+      <span>CPM <strong id="stat-cpm">0</strong></span>
+    </div>
+
+    <div class="upgrades" id="upgrades"></div>
+
+    <div class="end-block">
+      <button class="end-btn" id="end-btn" disabled>End Tier 1</button>
+      <button class="pause-btn" id="pause-btn" type="button" aria-pressed="false">Pause</button>
+      <button class="dev-btn" id="end-game-early-btn" title="Dev tool: end the run immediately at the current tier and jump to the end-of-game report, regardless of consolidation or tier. The active tier's snapshot closes mid-progress; the report renders honestly from whatever state you're in.">Dev — End game now</button>
+    </div>
+
+    <div class="dev-panel">
+      <div class="dev-label">Dev — Session log</div>
+      <div class="dev-row">
+        <button class="dev-btn" id="log-toggle">▸ Show summary log</button>
+        <span class="dev-suffix">clicks, ticks excluded</span>
+      </div>
+      <pre class="log-content hidden" id="log-content"></pre>
+    </div>
+  </div>
+
+  <div class="wrap hidden" id="report-wrap">
+    <div class="report">
+      <h1>Tier 1 — session ended</h1>
+      <div class="muted" id="report-tagline">A run, recorded.</div>
+
+      <div class="report-grid">
+        <div>Total play time</div><div id="r-time">--</div>
+        <div>Completion extension</div><div id="r-completionist-extension">--</div>
+        <div>Final mass</div><div id="r-mass">--</div>
+        <div>Total mass gained</div><div id="r-mass-gained">--</div>
+        <div>Mass from clicks</div><div id="r-mass-click">--</div>
+        <div>Mass from passive</div><div id="r-mass-passive">--</div>
+        <div>Mass from auto</div><div id="r-mass-auto">--</div>
+        <div>Total clicks</div><div id="r-clicks">--</div>
+        <div>Average clicks / minute</div><div id="r-cpm">--</div>
+      </div>
+
+      <table>
+        <thead><tr><th>Upgrade</th><th>Final level</th></tr></thead>
+        <tbody id="r-levels"></tbody>
+      </table>
+
+      <div class="completion" id="r-completion"></div>
+
+      <div class="report-charts">
+        <div class="report-charts-heading">Your trajectory</div>
+        <canvas class="report-chart" id="r-chart-mass" aria-label="Mass over time chart"></canvas>
+        <canvas class="report-chart" id="r-chart-consolidation" aria-label="Consolidation progress chart"></canvas>
+        <canvas class="report-chart" id="r-chart-income" aria-label="Income breakdown chart"></canvas>
+        <canvas class="report-chart" id="r-chart-levels" aria-label="Per-upgrade levels chart"></canvas>
+        <div class="report-chart-legend" id="r-chart-levels-legend"></div>
+
+        <canvas class="report-chart" id="r-chart-cpm" aria-label="Clicks per minute over time chart"></canvas>
+
+        <hr class="report-charts-divider">
+
+        <div class="report-charts-heading">Compared to algorithmic player</div>
+        <canvas class="report-chart" id="r-chart-compare" aria-label="Player vs simulator comparison chart"></canvas>
+        <div class="report-cmp-summary">
+          <div>
+            <div class="cmp-label">Your run</div>
+            <div class="cmp-value" id="r-cmp-your">--:--</div>
+          </div>
+          <div>
+            <div class="cmp-label" id="r-cmp-sim-label">Sim</div>
+            <div class="cmp-value" id="r-cmp-sim">--:--</div>
+          </div>
+          <div>
+            <div class="cmp-label">Delta</div>
+            <div class="cmp-value" id="r-cmp-delta">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dev-label" style="text-align:left; margin-top:18px;">Session log (clicks, ticks excluded)</div>
+      <pre class="log-content" id="report-log-content" style="margin-top:6px;"></pre>
+
+      <div class="log-actions" style="margin-top:18px;">
+        <button class="copy-btn" id="copy-btn">Copy session log</button>
+        <button class="copy-btn" id="download-btn">Download log (.json)</button>
+        <button class="copy-btn" id="report-reset-btn" title="Wipe the saved universe and start fresh from T1. The current report stays visible until you confirm.">Start a new universe</button>
+      </div>
+    </div>
+  </div>
+  </div><!-- /data-tab-panel="playtest" -->
+
+<!-- JS sim migration:
+     Phase 1 — data + core math + tiny store extracted to src/sim/*.js using
+     IIFE + window.DF.sim.* namespace. Loaded as plain <script> tags in
+     dependency order. No ES modules — must load from file:// directly.
+     Phase 2 — three-tab shell (Parameters / Simulator / Playtest) and the
+     playtest UI logic extracted to src/ui/*.js using DF.ui.* namespace.
+     Default tab: Playtest.
+     Phase 3 Part A — strategy + runner extracted to src/sim/strategy.js
+     and src/sim/runner.js for the algorithmic-player simulator.
+     Phase 3 Part B — Simulator tab UI built on top of the runner; charts
+     and embedded playtest reference data also added. -->
+<script src="src/sim/data.js"></script>
+<script src="src/sim/core.js"></script>
+<script src="src/sim/store.js"></script>
+<script src="src/sim/strategy.js"></script>
+<script src="src/sim/runner.js"></script>
+<script src="src/sim/save.js"></script>
+<script src="src/sim/offline.js"></script>
+<script src="src/sim/profiles.js"></script>
+<script src="src/sim/sweep.js"></script>
+<script src="src/ui/format.js"></script>
+<script src="src/ui/tabs.js"></script>
+<script src="src/ui/charts.js"></script>
+<script src="src/ui/settings.js"></script>
+<script src="src/ui/playtest.js"></script>
+<script src="src/ui/simulator.js"></script>
+<script src="src/ui/parameters.js"></script>
+<script>
+"use strict";
+
+// Phase 3 Part B bootstrap — playtest UI in src/ui/playtest.js,
+// simulator UI in src/ui/simulator.js, tab-switching in src/ui/tabs.js.
+// Phase 4 bootstrap — parameters UI in src/ui/parameters.js. Initialize the
+// parameters tab BEFORE the simulator so the shared params store is populated
+// before simulator.js subscribes to it.
+DF.ui.tabs.init({ defaultTab: "playtest" });
+DF.ui.playtest.init();
+DF.ui.parameters.init();
+DF.ui.simulator.init();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+pairing_id,timing,buyer,mode,run_idx,kind,total_calendar_s,total_active_s,final_tier,dnf,dnf_reason_category,dnf_reason,final_mass,t1_entry_s,t2_entry_s,t1_active_s,t2_active_s,t1_exit_mass,t2_exit_mass
+p11,bot-100cpm,greedy-vpc-1.5,completion,0,continuous-bot,9.00,9.00,2,N,,,8.53,0.00,,0.00,,8.5338e+0,
+p11,bot-100cpm,greedy-vpc-1.5,completion,1,continuous-bot,9.00,9.00,2,N,,,8.53,0.00,,0.00,,8.5338e+0,
+p11,bot-100cpm,greedy-vpc-1.5,completion,2,continuous-bot,9.00,9.00,2,N,,,8.53,0.00,,0.00,,8.5338e+0,
+p11,bot-100cpm,greedy-vpc-1.5,completion,3,continuous-bot,9.00,9.00,2,N,,,8.53,0.00,,0.00,,8.5338e+0,
+p11,bot-100cpm,greedy-vpc-1.5,completion,4,continuous-bot,9.00,9.00,2,N,,,8.53,0.00,,0.00,,8.5338e+0,
+p11,bot-100cpm,greedy-vpc-1.5,completion,5,continuous-bot,9.00,9.00,2,N,,,8.53,0.00,,0.00,,8.5338e+0,
+p11,bot-100cpm,greedy-vpc-1.5,completion,6,continuous-bot,9.00,9.00,2,N,,,8.53,0.00,,0.00,,8.5338e+0,
+p11,bot-100cpm,greedy-vpc-1.5,completion,7,continuous-bot,9.00,9.00,2,N,,,8.53,0.00,,0.00,,8.5338e+0,
+p11,bot-100cpm,greedy-vpc-1.5,completion,8,continuous-bot,9.00,9.00,2,N,,,8.53,0.00,,0.00,,8.5338e+0,
+p11,bot-100cpm,greedy-vpc-1.5,completion,9,continuous-bot,9.00,9.00,2,N,,,8.53,0.00,,0.00,,8.5338e+0,

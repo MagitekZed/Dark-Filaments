@@ -1,0 +1,4 @@
+pairing_id,timing,buyer,mode,run_idx,kind,total_calendar_s,total_active_s,final_tier,dnf,dnf_reason_category,dnf_reason,final_mass,t1_entry_s,t2_entry_s,t3_entry_s,t4_entry_s,t1_active_s,t2_active_s,t3_active_s,t4_active_s,t1_exit_mass,t2_exit_mass,t3_exit_mass,t4_exit_mass
+p3,realistic-engaged,thr-hoarder,threshold,0,engagement-profile,142949.90,5400.00,4,N,,,308306.65,0.00,781.00,13682.52,142052.90,0.00,3600.00,900.00,900.00,1.7963e-2,1.0039e+5,1.6845e+6,
+p3,realistic-engaged,thr-hoarder,threshold,1,engagement-profile,66070.15,5400.00,4,N,,,427006.23,0.00,781.00,39510.51,65172.15,0.00,3600.00,900.00,900.00,1.7963e-2,3.5908e+5,1.1188e+6,
+p3,realistic-engaged,thr-hoarder,threshold,2,engagement-profile,45399.50,5400.00,4,N,,,279075.35,0.00,781.00,11365.89,44502.50,0.00,3600.00,900.00,900.00,1.7963e-2,7.7189e+4,1.2841e+5,

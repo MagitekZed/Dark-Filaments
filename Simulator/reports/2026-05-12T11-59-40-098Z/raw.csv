@@ -1,0 +1,61 @@
+pairing_id,timing,buyer,mode,run_idx,kind,total_calendar_s,total_active_s,final_tier,dnf,dnf_reason,final_mass,t1_entry_s,t2_entry_s,t3_entry_s,t4_entry_s,t1_active_s,t2_active_s,t3_active_s,t4_active_s
+p1,engaged-steady,completionist,completion,0,engagement-profile,204523.43,2700.00,4,N,,18189058941.25,0.00,13935.70,184307.87,203629.43,0.00,900.00,900.00,900.00
+p1,engaged-steady,completionist,completion,1,engagement-profile,90635.69,2700.00,4,N,,429958368.92,0.00,48373.02,81801.53,89743.69,0.00,900.00,900.00,900.00
+p1,engaged-steady,completionist,completion,2,engagement-profile,64313.23,2700.00,4,N,,6656947.39,0.00,10846.86,54240.67,63421.23,0.00,900.00,900.00,900.00
+p1,engaged-steady,completionist,completion,3,engagement-profile,44778.84,2700.00,4,N,,103204185.58,0.00,30644.04,41638.02,44573.84,0.00,900.00,900.00,900.00
+p1,engaged-steady,completionist,completion,4,engagement-profile,85300.58,2700.00,4,N,,608514396.54,0.00,18194.08,26314.20,84409.58,0.00,900.00,900.00,900.00
+p2,engaged-steady,consolidation-threshold,threshold,0,engagement-profile,204523.43,2700.00,4,N,,3113746.71,0.00,13773.70,184301.87,203625.43,0.00,900.00,900.00,900.00
+p2,engaged-steady,consolidation-threshold,threshold,1,engagement-profile,90635.69,2700.00,4,N,,97810401.68,0.00,48211.02,81795.53,89738.69,0.00,900.00,900.00,900.00
+p2,engaged-steady,consolidation-threshold,threshold,2,engagement-profile,64313.23,2700.00,4,N,,421154282.06,0.00,10684.86,54234.67,63416.23,0.00,900.00,900.00,900.00
+p2,engaged-steady,consolidation-threshold,threshold,3,engagement-profile,44778.84,2700.00,4,N,,2222913.08,0.00,30482.04,41632.02,43883.84,0.00,900.00,900.00,900.00
+p2,engaged-steady,consolidation-threshold,threshold,4,engagement-profile,85300.58,2700.00,4,N,,753629406.13,0.00,18032.08,26308.20,84405.58,0.00,900.00,900.00,900.00
+p3,engaged-high,completionist,completion,0,engagement-profile,205423.43,3600.00,4,N,,9724689436.58,0.00,13808.70,184603.87,204225.43,0.00,1200.00,1200.00,1200.00
+p3,engaged-high,completionist,completion,1,engagement-profile,91535.69,3600.00,4,N,,27811712044.74,0.00,48246.02,82097.53,90340.69,0.00,1200.00,1200.00,1200.00
+p3,engaged-high,completionist,completion,2,engagement-profile,65213.23,3600.00,4,N,,54508298535.69,0.00,10719.86,54536.67,64018.23,0.00,1200.00,1200.00,1200.00
+p3,engaged-high,completionist,completion,3,engagement-profile,45678.84,3600.00,4,N,,1447242358.21,0.00,30517.04,41934.02,44753.84,0.00,1200.00,1200.00,1200.00
+p3,engaged-high,completionist,completion,4,engagement-profile,86200.58,3600.00,4,N,,10588701598.06,0.00,18067.08,26610.20,85006.58,0.00,1200.00,1200.00,1200.00
+p4,engaged-burst,completionist,completion,0,engagement-profile,278099.80,3000.00,4,N,,31353689.35,0.00,20571.04,276601.80,277643.80,0.00,1500.00,,1500.00
+p4,engaged-burst,completionist,completion,1,engagement-profile,136403.53,4500.00,4,N,,399455616962.75,0.00,72227.02,122842.29,134906.53,0.00,1500.00,1500.00,1500.00
+p4,engaged-burst,completionist,completion,2,engagement-profile,96919.84,4500.00,4,N,,12111601241.91,0.00,15937.78,81501.01,95421.84,0.00,1500.00,1500.00,1500.00
+p4,engaged-burst,completionist,completion,3,engagement-profile,67618.27,4500.00,4,N,,7671763506.79,0.00,45633.56,62597.03,66123.27,0.00,1500.00,1500.00,1500.00
+p4,engaged-burst,completionist,completion,4,engagement-profile,128400.86,4500.00,4,N,,8127024127.87,0.00,26958.63,39611.30,126905.86,0.00,1500.00,1500.00,1500.00
+p5,casual-steady,completionist,completion,0,engagement-profile,608170.28,2700.00,4,N,,142215207544.67,0.00,40855.09,551108.61,607275.28,0.00,900.00,900.00,900.00
+p5,casual-steady,completionist,completion,1,engagement-profile,266507.06,2700.00,4,N,,7735820999.53,0.00,144167.05,243589.58,265615.06,0.00,900.00,900.00,900.00
+p5,casual-steady,completionist,completion,2,engagement-profile,187539.68,2700.00,4,N,,2359011697.90,0.00,31588.57,160907.01,186647.68,0.00,900.00,900.00,900.00
+p5,casual-steady,completionist,completion,3,engagement-profile,128936.53,2700.00,4,N,,1259151869.52,0.00,90980.12,123099.06,128295.53,0.00,900.00,900.00,900.00
+p5,casual-steady,completionist,completion,4,engagement-profile,250501.73,2700.00,4,N,,14473388930.76,0.00,53630.25,77127.60,249609.73,0.00,900.00,900.00,900.00
+p6,casual-steady,consolidation-threshold,threshold,0,engagement-profile,551999.61,1800.00,4,N,,43797275.74,0.00,40693.09,551102.61,551112.61,0.00,900.00,,900.00
+p6,casual-steady,consolidation-threshold,threshold,1,engagement-profile,266507.06,2700.00,4,N,,612105059.41,0.00,144005.05,243583.58,265609.06,0.00,900.00,900.00,900.00
+p6,casual-steady,consolidation-threshold,threshold,2,engagement-profile,187539.68,2700.00,4,N,,1305606412.54,0.00,31426.57,160901.01,186641.68,0.00,900.00,900.00,900.00
+p6,casual-steady,consolidation-threshold,threshold,3,engagement-profile,128936.53,2700.00,4,N,,79037302.39,0.00,90818.12,123093.06,128040.53,0.00,900.00,900.00,900.00
+p6,casual-steady,consolidation-threshold,threshold,4,engagement-profile,250501.73,2700.00,4,N,,4311803389.28,0.00,53468.25,77121.60,249606.73,0.00,900.00,900.00,900.00
+p7,casual-evening,consolidation-threshold,threshold,0,engagement-profile,553799.61,3600.00,4,N,,112174331.60,0.00,40655.09,41592.09,552007.61,0.00,,1800.00,1800.00
+p7,casual-evening,consolidation-threshold,threshold,1,engagement-profile,246280.58,3600.00,4,N,,4825053797.43,0.00,143967.05,144904.05,244488.58,0.00,,1800.00,1800.00
+p7,casual-evening,consolidation-threshold,threshold,2,engagement-profile,163598.01,3600.00,4,N,,7962959300.82,0.00,31388.57,32325.57,161806.01,0.00,,1800.00,1800.00
+p7,casual-evening,consolidation-threshold,threshold,3,engagement-profile,125790.06,3600.00,4,N,,2056946965.63,0.00,90780.12,91717.12,123998.06,0.00,,1800.00,1800.00
+p7,casual-evening,consolidation-threshold,threshold,4,engagement-profile,79818.60,3600.00,4,N,,1745763517.08,0.00,53430.25,54367.25,78026.60,0.00,,1800.00,1800.00
+p8,drift-light,consolidation-threshold,threshold,0,engagement-profile,1311605.22,1200.00,4,N,,24538250.92,0.00,101236.22,1311009.22,1311019.22,0.00,600.00,,600.00
+p8,drift-light,consolidation-threshold,threshold,1,engagement-profile,661317.65,1800.00,4,N,,12832475.88,0.00,359516.12,607305.46,660721.65,0.00,600.00,600.00,600.00
+p8,drift-light,consolidation-threshold,threshold,2,engagement-profile,463899.19,1800.00,4,N,,181461559.07,0.00,78069.92,400599.03,463302.19,0.00,600.00,600.00,600.00
+p8,drift-light,consolidation-threshold,threshold,3,engagement-profile,317391.33,1800.00,4,N,,128369662.20,0.00,226548.80,306079.14,316797.33,0.00,600.00,600.00,600.00
+p8,drift-light,consolidation-threshold,threshold,4,engagement-profile,621304.32,1800.00,4,N,,2059677287.79,0.00,133174.13,191150.49,620710.32,0.00,600.00,600.00,600.00
+p9,engaged-steady,lazy-stackable,threshold,0,engagement-profile,185199.87,1800.00,4,N,,1182892.90,0.00,13750.70,184301.87,185183.87,0.00,900.00,,900.00
+p9,engaged-steady,lazy-stackable,threshold,1,engagement-profile,90635.69,2700.00,4,N,,16358505.52,0.00,48188.02,81795.53,89738.69,0.00,900.00,900.00,900.00
+p9,engaged-steady,lazy-stackable,threshold,2,engagement-profile,64313.23,2700.00,4,N,,272035718.51,0.00,10661.86,54234.67,63416.23,0.00,900.00,900.00,900.00
+p9,engaged-steady,lazy-stackable,threshold,3,engagement-profile,44778.84,2700.00,4,N,,53423110.06,0.00,30459.04,41632.02,43883.84,0.00,900.00,900.00,900.00
+p9,engaged-steady,lazy-stackable,threshold,4,engagement-profile,85300.58,2700.00,4,N,,1005099399.58,0.00,18009.08,26308.20,84405.58,0.00,900.00,900.00,900.00
+p10,engaged-steady,idle-clicker,threshold,0,engagement-profile,,,1,Y,calendar budget exhausted at T1,133500.00,0.00,,,,80100.00,,,
+p10,engaged-steady,idle-clicker,threshold,1,engagement-profile,,,1,Y,calendar budget exhausted at T1,121500.00,0.00,,,,72900.00,,,
+p10,engaged-steady,idle-clicker,threshold,2,engagement-profile,,,1,Y,calendar budget exhausted at T1,144000.00,0.00,,,,86400.00,,,
+p10,engaged-steady,idle-clicker,threshold,3,engagement-profile,,,1,Y,calendar budget exhausted at T1,123000.00,0.00,,,,73800.00,,,
+p10,engaged-steady,idle-clicker,threshold,4,engagement-profile,,,1,Y,calendar budget exhausted at T1,123000.00,0.00,,,,73800.00,,,
+p11,bot-100cpm,greedy-vpc-1.5,completion,0,continuous-bot,4433.00,4433.00,4,N,,1764751.57,0.00,495.00,2016.00,,0.00,495.00,2016.00,
+p11,bot-100cpm,greedy-vpc-1.5,completion,1,continuous-bot,4433.00,4433.00,4,N,,1764751.57,0.00,495.00,2016.00,,0.00,495.00,2016.00,
+p11,bot-100cpm,greedy-vpc-1.5,completion,2,continuous-bot,4433.00,4433.00,4,N,,1764751.57,0.00,495.00,2016.00,,0.00,495.00,2016.00,
+p11,bot-100cpm,greedy-vpc-1.5,completion,3,continuous-bot,4433.00,4433.00,4,N,,1764751.57,0.00,495.00,2016.00,,0.00,495.00,2016.00,
+p11,bot-100cpm,greedy-vpc-1.5,completion,4,continuous-bot,4433.00,4433.00,4,N,,1764751.57,0.00,495.00,2016.00,,0.00,495.00,2016.00,
+p12,bot-60cpm,greedy-vpc-1.5,completion,0,continuous-bot,4846.00,4846.00,4,N,,2092866.01,0.00,676.00,2408.00,,0.00,676.00,2408.00,
+p12,bot-60cpm,greedy-vpc-1.5,completion,1,continuous-bot,4846.00,4846.00,4,N,,2092866.01,0.00,676.00,2408.00,,0.00,676.00,2408.00,
+p12,bot-60cpm,greedy-vpc-1.5,completion,2,continuous-bot,4846.00,4846.00,4,N,,2092866.01,0.00,676.00,2408.00,,0.00,676.00,2408.00,
+p12,bot-60cpm,greedy-vpc-1.5,completion,3,continuous-bot,4846.00,4846.00,4,N,,2092866.01,0.00,676.00,2408.00,,0.00,676.00,2408.00,
+p12,bot-60cpm,greedy-vpc-1.5,completion,4,continuous-bot,4846.00,4846.00,4,N,,2092866.01,0.00,676.00,2408.00,,0.00,676.00,2408.00,

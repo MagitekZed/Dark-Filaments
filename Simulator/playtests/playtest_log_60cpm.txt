@@ -1,0 +1,51 @@
+[   16.1s] BUY  Solar Wind         -> Lv  1   cost     7   mass      3.0   coh 0.00
+[   23.8s] BUY  Solar Wind         -> Lv  2   cost     9   mass      3.5   coh 0.00
+[   30.1s] BUY  Solar Wind         -> Lv  3   cost    10   mass      1.4   coh 0.00
+[   39.2s] BUY  Solar Wind         -> Lv  4   cost    11   mass      1.9   coh 0.00
+[   58.4s] BUY  Asteroid Belt      -> Lv  1   cost    20   mass      7.0   coh 0.00
+[   73.9s] BUY  Stellar Coupling   -> Lv  1   cost    22   mass      8.8   coh 0.00
+[   86.3s] BUY  Stellar Coupling   -> Lv  2   cost    31   mass      0.9   coh 0.00
+[   97.1s] BUY  Solar Wind         -> Lv  5   cost    13   mass     13.1   coh 0.00
+[  102.9s] BUY  Asteroid Belt      -> Lv  2   cost    23   mass      3.3   coh 0.00
+[  108.6s] BUY  Solar Wind         -> Lv  6   cost    15   mass      4.2   coh 0.00
+[  120.4s] BUY  Asteroid Belt      -> Lv  3   cost    27   mass      7.0   coh 0.00
+[  134.2s] BUY  Stellar Coupling   -> Lv  3   cost    44   mass      2.8   coh 0.00
+[  163.5s] BUY  Magnetosphere      -> Lv  1   cost    80   mass     15.7   coh 0.00
+[  174.6s] BUY  Asteroid Belt      -> Lv  4   cost    31   mass     30.7   coh 0.00
+[  183.3s] BUY  Stellar Coupling   -> Lv  4   cost    61   mass      7.2   coh 0.00
+[  201.8s] BUY  Stellar Coupling   -> Lv  5   cost    85   mass      9.3   coh 0.00
+[  208.6s] BUY  Asteroid Belt      -> Lv  5   cost    35   mass      9.6   coh 0.00
+[  215.0s] BUY  Solar Wind         -> Lv  7   cost    17   mass     27.2   coh 0.00
+[  216.3s] BUY  Solar Wind         -> Lv  8   cost    19   mass     13.9   coh 0.00
+[  218.9s] BUY  Solar Wind         -> Lv  9   cost    22   mass      6.0   coh 0.00
+[  230.3s] BUY  Asteroid Belt      -> Lv  6   cost    41   mass     28.7   coh 0.00
+[  255.6s] BUY  Magnetosphere      -> Lv  2   cost   160   mass     13.2   coh 0.00
+[  260.1s] BUY  Solar Wind         -> Lv 10   cost    25   mass     19.2   coh 0.00
+[  263.9s] BUY  Solar Wind         -> Lv 11   cost    29   mass     13.9   coh 0.00
+[  273.6s] BUY  Asteroid Belt      -> Lv  7   cost    47   mass     35.9   coh 0.00
+[  290.8s] BUY  Stellar Coupling   -> Lv  6   cost   119   mass     37.1   coh 0.00
+[  320.9s] BUY  Orbital Resonance  -> Lv  1   cost   240   mass     18.5   coh 0.40
+[  324.6s] BUY  Solar Wind         -> Lv 12   cost    33   mass     19.7   coh 0.40
+[  331.4s] BUY  Asteroid Belt      -> Lv  8   cost    54   mass     23.3   coh 0.40
+[  353.2s] BUY  Solar Wind         -> Lv 13   cost    38   mass    179.4   coh 0.40
+[  353.5s] BUY  Solar Wind         -> Lv 14   cost    44   mass    139.5   coh 0.40
+[  353.8s] BUY  Solar Wind         -> Lv 15   cost    50   mass     89.9   coh 0.40
+[  355.0s] BUY  Asteroid Belt      -> Lv  9   cost    62   mass     43.8   coh 0.40
+[  394.8s] BUY  Magnetosphere      -> Lv  3   cost   320   mass     91.6   coh 0.40
+[  407.7s] BUY  Stellar Coupling   -> Lv  7   cost   166   mass     63.7   coh 0.40
+[  409.3s] BUY  Asteroid Belt      -> Lv 10   cost    71   mass     11.8   coh 0.40
+[  460.6s] BUY  Heliopause         -> Lv  1   cost   575   mass     11.5   coh 1.00
+[  483.6s] BUY  Asteroid Belt      -> Lv 11   cost    81   mass    216.4   coh 1.00
+[  484.4s] BUY  Asteroid Belt      -> Lv 12   cost    94   mass    131.3   coh 1.00
+[  485.4s] BUY  Solar Wind         -> Lv 16   cost    57   mass     87.3   coh 1.00
+[  485.6s] BUY  Solar Wind         -> Lv 17   cost    66   mass     26.4   coh 1.00
+[  549.3s] BUY  First Photons      -> Lv  1   cost   850   mass     11.8   coh 1.00
+[  576.8s] BUY  Asteroid Belt      -> Lv 13   cost   108   mass    323.7   coh 1.00
+[  577.5s] BUY  Asteroid Belt      -> Lv 14   cost   124   mass    216.2   coh 1.00
+[  606.5s] BUY  Magnetosphere      -> Lv  4   cost   640   mass     34.7   coh 1.00
+[  622.7s] BUY  Stellar Coupling   -> Lv  8   cost   232   mass     75.8   coh 1.00
+[  693.6s] BUY  Magnetosphere      -> Lv  5   cost  1280   mass     51.8   coh 1.00
+[  695.2s] END   mass 83.4   clicks 689   time 695.2s   mag=Y   fp=Y
+# Session summary: 11:35 total (7:40 to cohesion + 3:54 completionist). Avg 59.5 cpm.
+# Final levels: SW=17, AB=14, SC=8, Mag=5, OR=Y, HP=Y, FP=Y. Total purchases: 47.
+# Mass: 38.0% from clicks, 62.0% passive.

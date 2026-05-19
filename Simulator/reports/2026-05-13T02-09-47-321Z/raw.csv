@@ -1,0 +1,11 @@
+pairing_id,timing,buyer,mode,run_idx,kind,total_calendar_s,total_active_s,final_tier,dnf,dnf_reason_category,dnf_reason,final_mass,t1_entry_s,t2_entry_s,t1_active_s,t2_active_s,t1_exit_mass,t2_exit_mass
+p1,engaged-steady,completionist,completion,0,engagement-profile,14340.70,900.00,2,N,,,288.04,0.00,13449.70,0.00,900.00,8.5338e+0,
+p1,engaged-steady,completionist,completion,1,engagement-profile,48778.02,900.00,2,N,,,288.04,0.00,47887.02,0.00,900.00,8.5338e+0,
+p1,engaged-steady,completionist,completion,2,engagement-profile,11251.86,900.00,2,N,,,288.04,0.00,10360.86,0.00,900.00,8.5338e+0,
+p1,engaged-steady,completionist,completion,3,engagement-profile,31049.04,900.00,2,N,,,288.04,0.00,30158.04,0.00,900.00,8.5338e+0,
+p1,engaged-steady,completionist,completion,4,engagement-profile,18599.08,900.00,2,N,,,288.04,0.00,17708.08,0.00,900.00,8.5338e+0,
+p1,engaged-steady,completionist,completion,5,engagement-profile,25772.95,900.00,2,N,,,288.04,0.00,24881.95,0.00,900.00,8.5338e+0,
+p1,engaged-steady,completionist,completion,6,engagement-profile,9693.65,900.00,2,N,,,288.04,0.00,8802.65,0.00,900.00,8.5338e+0,
+p1,engaged-steady,completionist,completion,7,engagement-profile,5145.42,900.00,2,N,,,288.04,0.00,4254.42,0.00,900.00,8.5338e+0,
+p1,engaged-steady,completionist,completion,8,engagement-profile,143326.30,900.00,2,N,,,288.04,0.00,142435.30,0.00,900.00,8.5338e+0,
+p1,engaged-steady,completionist,completion,9,engagement-profile,16897.04,900.00,2,N,,,288.04,0.00,16006.04,0.00,900.00,8.5338e+0,

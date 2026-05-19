@@ -1,0 +1,63 @@
+[    5.0s] TICK                           mass      1.0   mps   0.00   mpc   1.00   cpm  12
+[   10.0s] TICK                           mass      9.0   mps   0.00   mpc   1.00   cpm  54
+[   15.0s] TICK                           mass     18.0   mps   0.00   mpc   1.00   cpm  72
+[   17.1s] BUY  Solar Wind         -> Lv  1   cost     7   mass     14.0   coh 0.00
+[   17.7s] BUY  Solar Wind         -> Lv  2   cost     9   mass      7.0   coh 0.00
+[   20.0s] TICK                           mass     11.4   mps   0.16   mpc   1.00   cpm  78
+[   25.0s] TICK                           mass     20.2   mps   0.16   mpc   1.00   cpm  82
+[   30.0s] TICK                           mass     30.0   mps   0.16   mpc   1.00   cpm  86
+[   32.9s] BUY  Stellar Coupling   -> Lv  1   cost    22   mass     12.3   coh 0.00
+[   34.0s] BUY  Solar Wind         -> Lv  3   cost    10   mass      6.1   coh 0.00
+[   35.0s] TICK                           mass      9.1   mps   0.24   mpc   1.35   cpm 100
+[   36.7s] BUY  Solar Wind         -> Lv  4   cost    11   mass      2.7   coh 0.00
+[   40.0s] TICK                           mass     10.7   mps   0.32   mpc   1.35   cpm 100
+[   45.0s] TICK                           mass     24.5   mps   0.32   mpc   1.35   cpm 100
+[   50.0s] TICK                           mass     36.9   mps   0.32   mpc   1.35   cpm 100
+[   55.0s] TICK                           mass     49.3   mps   0.32   mpc   1.35   cpm 100
+[   56.8s] BUY  Stellar Coupling   -> Lv  2   cost    31   mass     22.8   coh 0.00
+[   58.1s] BUY  Asteroid Belt      -> Lv  1   cost    20   mass      8.6   coh 0.00
+[   60.0s] TICK                           mass     14.7   mps   0.52   mpc   1.70   cpm 100
+[   63.5s] BUY  Asteroid Belt      -> Lv  2   cost    23   mass      1.8   coh 0.00
+[   65.0s] TICK                           mass      8.3   mps   0.72   mpc   1.70   cpm 100
+[   70.0s] TICK                           mass     25.5   mps   0.72   mpc   1.70   cpm 100
+[   75.0s] TICK                           mass     44.4   mps   0.72   mpc   1.70   cpm 100
+[   80.0s] TICK                           mass     61.6   mps   0.72   mpc   1.70   cpm 100
+[   85.0s] TICK                           mass     78.8   mps   0.72   mpc   1.70   cpm 100
+[   85.7s] BUY  Stellar Coupling   -> Lv  3   cost    44   mass     39.1   coh 0.00
+[   90.0s] TICK                           mass     57.1   mps   0.72   mpc   2.05   cpm 100
+[   95.0s] TICK                           mass     77.1   mps   0.72   mpc   2.05   cpm 100
+[  100.0s] TICK                           mass     97.1   mps   0.72   mpc   2.05   cpm 100
+[  105.0s] TICK                           mass    119.1   mps   0.72   mpc   2.05   cpm 100
+[  106.9s] BUY  Magnetosphere      -> Lv  1   cost    80   mass     46.0   coh 0.00
+[  109.0s] BUY  Asteroid Belt      -> Lv  3   cost    27   mass     30.8   coh 0.00
+[  109.5s] BUY  Asteroid Belt      -> Lv  4   cost    31   mass      2.5   coh 0.00
+[  141.7s] BUY  Magnetosphere      -> Lv  2   cost   160   mass     21.0   coh 0.00
+[  143.1s] BUY  Solar Wind         -> Lv  5   cost    13   mass     19.1   coh 0.00
+[  144.0s] BUY  Solar Wind         -> Lv  6   cost    15   mass     12.3   coh 0.00
+[  161.5s] BUY  Stellar Coupling   -> Lv  4   cost    61   mass     67.2   coh 0.00
+[  162.9s] BUY  Asteroid Belt      -> Lv  5   cost    35   mass     40.3   coh 0.00
+[  163.6s] BUY  Asteroid Belt      -> Lv  6   cost    41   mass      5.9   coh 0.00
+[  165.7s] BUY  Solar Wind         -> Lv  7   cost    17   mass      6.7   coh 0.00
+[  167.5s] BUY  Solar Wind         -> Lv  8   cost    19   mass      2.8   coh 0.00
+[  170.5s] BUY  Solar Wind         -> Lv  9   cost    22   mass      4.9   coh 0.00
+[  173.5s] BUY  Solar Wind         -> Lv 10   cost    25   mass      4.0   coh 0.00
+[  177.4s] BUY  Solar Wind         -> Lv 11   cost    29   mass      6.1   coh 0.00
+[  201.5s] BUY  Solar Wind         -> Lv 12   cost    33   mass    167.5   coh 0.00
+[  202.5s] BUY  Solar Wind         -> Lv 13   cost    38   mass    139.0   coh 0.00
+[  236.7s] BUY  Orbital Resonance  -> Lv  1   cost   240   mass    179.9   coh 0.40
+[  238.6s] BUY  Stellar Coupling   -> Lv  5   cost    85   mass    113.2   coh 0.40
+[  239.6s] BUY  Asteroid Belt      -> Lv  7   cost    47   mass     77.8   coh 0.40
+[  240.1s] BUY  Asteroid Belt      -> Lv  8   cost    54   mass     32.9   coh 0.40
+[  241.8s] BUY  Solar Wind         -> Lv 14   cost    44   mass      3.8   coh 0.40
+[  272.6s] BUY  Magnetosphere      -> Lv  3   cost   320   mass      7.0   coh 0.40
+[  278.7s] BUY  Asteroid Belt      -> Lv  9   cost    62   mass     16.2   coh 0.40
+[  281.9s] BUY  Solar Wind         -> Lv 15   cost    50   mass      5.4   coh 0.40
+[  293.0s] BUY  Stellar Coupling   -> Lv  6   cost   119   mass     26.6   coh 0.40
+[  341.9s] BUY  Heliopause         -> Lv  1   cost   575   mass     65.8   coh 1.00
+[  343.5s] BUY  Asteroid Belt      -> Lv 10   cost    71   mass     18.7   coh 1.00
+[  346.6s] BUY  Solar Wind         -> Lv 16   cost    57   mass      5.7   coh 1.00
+[  372.2s] BUY  Stellar Coupling   -> Lv  7   cost   166   mass    222.6   coh 1.00
+[  415.4s] BUY  First Photons      -> Lv  1   cost   850   mass     46.8   coh 1.00
+[  480.7s] BUY  Magnetosphere      -> Lv  4   cost   640   mass    609.8   coh 1.00
+[  515.3s] BUY  Magnetosphere      -> Lv  5   cost  1280   mass     11.8   coh 1.00
+[  517.0s] END   mass 40.2   clicks 854   time 517.0s   mag=Y   fp=Y

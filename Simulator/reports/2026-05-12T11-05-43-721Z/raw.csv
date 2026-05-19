@@ -1,0 +1,3 @@
+pairing_id,timing,buyer,n,run_idx,kind,total_seconds,final_tier,dnf,dnf_reason,final_mass
+p1,engaged-steady,completionist,1,0,engagement-profile-stub,,0,Y,engagement-profile windowing not implemented in S1 (deferred to S2),
+p2,engaged-steady,consolidation-threshold,1,0,engagement-profile-stub,,0,Y,engagement-profile windowing not implemented in S1 (deferred to S2),

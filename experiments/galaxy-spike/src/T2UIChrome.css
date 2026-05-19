@@ -1,0 +1,502 @@
+/* ─── T2 UI chrome — Edge Vignette direction ─────────────────────────────
+ *
+ * Duplicated from T1UIChrome.css with selector prefix `t1ui-*` → `t2ui-*`
+ * and two T2-specific additions:
+ *   1. .t2ui-sheet-grid is scrollable (T2 has 10 cards vs T1's 3).
+ *   2. .t2ui-card.maxed / .owned terminal-state styling for completionist
+ *      caps and one-shots after purchase.
+ *
+ * Chrome shape is locked at this point — diff against T1UIChrome.css
+ * before changing anything visual; both chromes are spec-equal.
+ */
+
+.t2ui-root {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  z-index: 4;
+  background:
+    linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.12) 0,
+      rgba(0, 0, 0, 0.00) 80px,
+      rgba(0, 0, 0, 0.00) calc(100% - 120px),
+      rgba(0, 0, 0, 0.10) 100%);
+}
+
+.t2ui-tap-zone {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border: 0;
+  cursor: default;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+/* ─── Top-left: Mass counter ───────────────────────────────────────── */
+
+.t2ui-mass {
+  position: absolute;
+  top: 22px;
+  left: 32px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.t2ui-mass-scrim {
+  position: absolute;
+  inset: -10px -22px;
+  backdrop-filter: blur(8px) brightness(0.55);
+  -webkit-backdrop-filter: blur(8px) brightness(0.55);
+  mask-image: radial-gradient(
+    ellipse 60% 75% at 50% 55%,
+    rgba(0, 0, 0, 1.0) 0%,
+    rgba(0, 0, 0, 1.0) 35%,
+    rgba(0, 0, 0, 0.0) 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 60% 75% at 50% 55%,
+    rgba(0, 0, 0, 1.0) 0%,
+    rgba(0, 0, 0, 1.0) 35%,
+    rgba(0, 0, 0, 0.0) 100%
+  );
+}
+
+.t2ui-mass-text {
+  position: relative;
+  font-family: 'Cormorant Garamond', 'Cormorant', Georgia, serif;
+  font-weight: 400;
+  font-size: 38pt;
+  line-height: 1.0;
+  color: #FFFFFF;
+  -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.6);
+  paint-order: stroke fill;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Top-left: Stats line ─────────────────────────────────────────── */
+
+.t2ui-stats {
+  position: absolute;
+  top: 86px;
+  left: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  padding: 4px 12px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 350;
+  font-size: 11pt;
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(6px) brightness(0.7);
+  -webkit-backdrop-filter: blur(6px) brightness(0.7);
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 3;
+  font-variant-numeric: tabular-nums;
+}
+
+.t2ui-stats .sep {
+  color: rgba(255, 255, 255, 0.30);
+  font-size: 0.85em;
+}
+
+/* ─── Top edge: Consolidation bar ──────────────────────────────────── */
+
+.t2ui-consolidation {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.t2ui-consolidation-track {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.t2ui-consolidation-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.30);
+  transition: width 240ms ease-out;
+}
+
+.t2ui-consolidation-glow {
+  position: absolute;
+  right: -4px;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 200, 144, 0.45), rgba(255, 200, 144, 0) 70%);
+}
+
+/* ─── Top-right: Settings gear ─────────────────────────────────────── */
+
+.t2ui-settings {
+  position: absolute;
+  top: 28px;
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 3;
+}
+
+.t2ui-settings svg {
+  width: 16px;
+  height: 16px;
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 1.25;
+  fill: none;
+  transition: stroke 180ms ease;
+}
+
+.t2ui-settings:hover svg {
+  stroke: rgba(255, 255, 255, 0.70);
+}
+
+.t2ui-settings-label {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: 6px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 350;
+  font-size: 9pt;
+  color: rgba(255, 255, 255, 0.50);
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  white-space: nowrap;
+}
+
+.t2ui-settings:hover .t2ui-settings-label {
+  opacity: 1;
+}
+
+/* ─── Bottom-right: Causal Connections ──────────────────────────────── */
+
+.t2ui-causal {
+  position: absolute;
+  bottom: 22px;
+  right: 32px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.t2ui-causal-scrim {
+  position: absolute;
+  inset: -6px -14px;
+  backdrop-filter: blur(8px) brightness(0.70);
+  -webkit-backdrop-filter: blur(8px) brightness(0.70);
+  mask-image: radial-gradient(
+    ellipse 60% 75% at 50% 55%,
+    rgba(0, 0, 0, 1.0) 0%,
+    rgba(0, 0, 0, 1.0) 30%,
+    rgba(0, 0, 0, 0.0) 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 60% 75% at 50% 55%,
+    rgba(0, 0, 0, 1.0) 0%,
+    rgba(0, 0, 0, 1.0) 30%,
+    rgba(0, 0, 0, 0.0) 100%
+  );
+}
+
+.t2ui-causal-text {
+  position: relative;
+  font-family: 'Cormorant Garamond', 'Cormorant', Georgia, serif;
+  font-weight: 400;
+  font-size: 14pt;
+  line-height: 1.0;
+  color: rgba(255, 255, 255, 0.90);
+  -webkit-text-stroke: 0.4px rgba(0, 0, 0, 0.5);
+  paint-order: stroke fill;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Bottom-center: Upgrade affordance ────────────────────────────── */
+
+.t2ui-upgrade {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.t2ui-click-verb {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: 10pt;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.0;
+}
+
+.t2ui-upgrade-hairline {
+  width: 56px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.22);
+  transition: background 1800ms cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.t2ui-upgrade.breathing .t2ui-upgrade-hairline {
+  animation: t2ui-hairline-breathe 1800ms cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes t2ui-hairline-breathe {
+  0%, 100% { background: rgba(255, 255, 255, 0.22); }
+  50%      { background: rgba(255, 255, 255, 0.48); }
+}
+
+.t2ui-upgrade-hint {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 9pt;
+  color: rgba(255, 255, 255, 0.40);
+  letter-spacing: 0.02em;
+  line-height: 1.0;
+  opacity: 0;
+  transition: opacity 600ms ease-out;
+}
+
+.t2ui-upgrade-hint.visible {
+  opacity: 1;
+}
+
+.t2ui-upgrade-hit {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 88px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+/* ─── Upgrade sheet — rises from bottom on open ────────────────────── */
+
+.t2ui-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 55%;
+  background: rgba(0, 0, 0, 0.40);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transform: translateY(100%);
+  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 5;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.t2ui-sheet.open {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.t2ui-sheet-close-zone {
+  position: absolute;
+  inset: 0;
+  bottom: 55%;
+  background: transparent;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.t2ui-sheet.open ~ .t2ui-sheet-close-zone {
+  pointer-events: auto;
+}
+
+.t2ui-sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+  /* T2 has 10 cards; sheet height is 55vh and gap layout exceeds it. */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* Subtle scrollbar — visible enough to discover, dim enough not to
+     compete with the chrome. */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.20) transparent;
+  padding-right: 4px;
+}
+
+.t2ui-sheet-grid::-webkit-scrollbar {
+  width: 4px;
+}
+
+.t2ui-sheet-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.20);
+  border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+  .t2ui-sheet {
+    height: 70%;
+    padding: 20px 16px;
+  }
+  .t2ui-sheet-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.t2ui-card {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  transition: border-color 220ms ease, opacity 220ms ease;
+  background: transparent;
+  text-align: left;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  cursor: pointer;
+  width: 100%;
+  color: inherit;
+  font: inherit;
+}
+
+.t2ui-card:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.t2ui-card.affordable {
+  border-top-color: rgba(255, 200, 144, 0.30);
+}
+
+/* Terminal states: stackables at max → 'Maxed'; one-shots purchased → 'Owned'. */
+.t2ui-card.maxed,
+.t2ui-card.owned {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.t2ui-card.maxed:hover,
+.t2ui-card.owned:hover {
+  background: transparent;
+}
+
+.t2ui-card-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 18pt;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.1;
+}
+
+.t2ui-card-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: 13pt;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.25;
+}
+
+.t2ui-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 4px;
+}
+
+.t2ui-card-cost {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: 15pt;
+  color: rgba(255, 255, 255, 0.85);
+  font-variant-numeric: tabular-nums;
+  transition: color 1000ms ease-out;
+}
+
+.t2ui-card.affordable .t2ui-card-cost {
+  color: #E8B878;
+}
+
+.t2ui-card.maxed .t2ui-card-cost,
+.t2ui-card.owned .t2ui-card-cost {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.t2ui-card-level {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: 12pt;
+  color: rgba(255, 255, 255, 0.50);
+  letter-spacing: 0.04em;
+}
+
+/* ─── Mobile: top-stack adjustments ───────────────────────────────── */
+
+@media (max-width: 480px) {
+  .t2ui-mass {
+    top: 18px;
+    left: 18px;
+  }
+  .t2ui-mass-text {
+    font-size: 26pt;
+  }
+  .t2ui-stats {
+    top: 58px;
+    left: 18px;
+    font-size: 10pt;
+  }
+  .t2ui-causal {
+    bottom: 76px;
+    right: 18px;
+  }
+  .t2ui-causal-text {
+    font-size: 11pt;
+  }
+  .t2ui-settings {
+    top: 18px;
+    right: 8px;
+  }
+}

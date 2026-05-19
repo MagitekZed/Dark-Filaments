@@ -1,0 +1,26 @@
+# Node
+node_modules/
+dist/
+build/
+*.log
+
+# Python (Simulator/legacy/ + Simulator/ archived artifacts)
+__pycache__/
+*.pyc
+*.pyo
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.sw?
+*.swp
+
+# Local Claude Code state — machine-specific permissions allowlist.
+# Not portable: entries reference machine-specific paths.
+# Each machine accumulates its own as you approve commands.
+.claude/settings.local.json

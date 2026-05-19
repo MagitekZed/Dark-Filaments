@@ -1,0 +1,6 @@
+pairing_id,timing,buyer,mode,run_idx,kind,total_calendar_s,total_active_s,final_tier,dnf,dnf_reason_category,dnf_reason,final_mass,t1_entry_s,t2_entry_s,t3_entry_s,t1_active_s,t2_active_s,t3_active_s,t1_exit_mass,t2_exit_mass,t3_exit_mass
+p15,hyper-onboard,comp-hoarder,completion,0,engagement-profile,3600.00,3600.00,3,N,,,820.10,0.00,700.00,3366.00,0.00,,3600.00,3.5044e-2,5.8298e+0,
+p15,hyper-onboard,comp-hoarder,completion,1,engagement-profile,3600.00,3600.00,3,N,,,820.10,0.00,700.00,3366.00,0.00,,3600.00,3.5044e-2,5.8298e+0,
+p15,hyper-onboard,comp-hoarder,completion,2,engagement-profile,3600.00,3600.00,3,N,,,820.10,0.00,700.00,3366.00,0.00,,3600.00,3.5044e-2,5.8298e+0,
+p15,hyper-onboard,comp-hoarder,completion,3,engagement-profile,3600.00,3600.00,3,N,,,820.10,0.00,700.00,3366.00,0.00,,3600.00,3.5044e-2,5.8298e+0,
+p15,hyper-onboard,comp-hoarder,completion,4,engagement-profile,3600.00,3600.00,3,N,,,820.10,0.00,700.00,3366.00,0.00,,3600.00,3.5044e-2,5.8298e+0,
