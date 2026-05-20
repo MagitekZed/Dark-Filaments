@@ -211,9 +211,23 @@ Three directors orchestrate by domain; each has access to specialists and projec
 | `engineering-director` | Simulator, prototype, scaffold, graphics, code |
 | `science-director` | Cosmological accuracy, real physics, terminology |
 
-Cross-cutting specialists: `rules-guardian` (load-bearing rules), `writer` (narrator-line generation + audit), `sim-tuner` (simulator workflow + playtest analysis), `doc-keeper` (source-of-truth maintenance).
+Cross-cutting specialists: `rules-guardian` (load-bearing rules), `writer` (narrator-line generation + audit), `sim-tuner` (simulator workflow + playtest analysis), `doc-keeper` (source-of-truth maintenance), `git-keeper` (session-end commits + push-to-main).
 
 Directors invoke each other directly when crossing domains, and loop the user in for qualitative decisions.
+
+### Git workflow
+
+The project's canonical version-control rule: **at the end of a session, all in-flight work is pushed to `origin/main`.** No long-running feature branches; no stale work-in-flight sitting on a worktree branch indefinitely.
+
+Mechanics:
+
+- Work is often done in a git worktree (e.g., `claude/<adjective-noun-hash>` branches off `main` for isolation). At session end, the worktree branch is merged into `main` (fast-forward preferred), then `main` is pushed.
+- The `git-keeper` agent owns this workflow. It stages and commits autonomously, but **always confirms with the user before `git push origin main`** — push is the only irreversible step.
+- Trigger is manual: the user signals end of session ("we're done", "wrap up", "ship it", or by invoking `git-keeper` directly). The agent does not auto-fire on session-stop hooks.
+- The agent refuses to stage secret-bearing files, refuses force-push to `main`, and surfaces unexpected git state (mid-rebase, mid-merge, conflict markers, detached HEAD) rather than acting.
+- Commit messages follow the project's voice rules — concise, no exclamation points, real-cosmology vocabulary when relevant — and include the `Co-Authored-By: Claude` trailer.
+
+See `.claude/agents/git-keeper.md` for the full workflow.
 
 ---
 
