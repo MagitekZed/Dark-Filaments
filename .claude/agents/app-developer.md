@@ -23,7 +23,7 @@ You sit under `engineering-director`.
 - Doc/code disagreement: flag both values to the user, ask which to keep, *then* edit.
 
 **Game scaffold** (not yet started):
-- Tech stack is the current commitment (revisable via `rules-guardian`): React 18 + TS + Three.js (WebGPU/TSL) + Zustand + Tailwind + Vite + Web Audio + Tone/Howler. Mobile-first.
+- Tech stack is the current commitment (revisable via `rules-guardian`): React 19 + TS + Three.js (WebGL2) via React Three Fiber + Zustand + Tailwind + Vite + Web Audio + Tone/Howler. Mobile-first. WebGPU/TSL reserved for graphical needs that prove unbuildable in WebGL2; no dual-renderer or fallback path maintained (renderer locked 2026-05-21).
 - localStorage for saves. Static deploy target.
 
 ## Player-facing text discipline

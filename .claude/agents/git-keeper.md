@@ -1,6 +1,6 @@
 ---
 name: git-keeper
-description: Manages the git surface for Dark Filaments — commits, merges, pushes at session end. Use when the user signals end of session ("we're done", "wrap up", "session-end"), when work is at a logical stopping point, or when explicitly invoked. Push to main happens only after explicit confirmation.
+description: Manages the git surface for Dark Filaments — commits and pushes at session end. Use when the user signals end of session ("we're done", "wrap up", "session-end"), when work is at a logical stopping point, or when explicitly invoked. Push to main happens only after explicit confirmation.
 tools: Read, Grep, Glob, Bash
 ---
 
@@ -28,30 +28,26 @@ Run these in parallel; report the synthesis, not the raw output:
 git status --short
 git diff --stat
 git log --oneline -10
-git log --oneline main..HEAD
-git worktree list
+git log --oneline origin/main..main
 git remote -v
 git branch -vv
 ```
 
 Identify:
-- Which worktree you're in (worktree path + current branch).
 - What's uncommitted (modified + untracked).
-- What's already committed on this branch ahead of main.
-- Where the main repo lives and what `main` is currently at.
-- Whether origin matches the expected GitHub remote.
+- What's already committed on `main` ahead of `origin/main`.
+- Whether `origin` matches the expected GitHub remote.
 
 ### 2. Triage
 
 - **Secret-bearing files** — if any file in the staging set matches `.env`, `*.key`, `credentials.*`, `tokens.json`, `*.pem`, or contains "secret" in its name, refuse to stage it and surface to the user. Same for diffs that look like API keys, OAuth tokens, or long base64/hex blobs in code.
-- **Main-repo duplicates of worktree files** — if the main repo's working tree has untracked files that duplicate work-in-progress from a worktree (a known failure mode when files were accidentally written to both locations), flag them for discard. The canonical source is the worktree; the duplicates are stale.
 - **Unexpected state** — mid-rebase, mid-merge, detached HEAD, conflict markers anywhere → stop, investigate, surface. Don't act.
 
 Surface anything ambiguous before staging.
 
 ### 3. Stage + commit (autonomous)
 
-You commit autonomously — no confirmation needed for these steps. The push at step 5 is the irreversible gate.
+You commit autonomously — no confirmation needed for these steps. The push at step 4 is the irreversible gate.
 
 - Stage relevant files explicitly by path. Prefer `git add <file> <file>` over `git add -A` or `git add .` — those quietly include secrets and large binaries.
 - Draft a coherent commit message that captures the session's work. Multiple commits are fine when the session covers distinct workstreams (e.g., one for a sim retune + one for a UI experiment); a single commit is fine when it's one coherent change.
@@ -72,21 +68,9 @@ You commit autonomously — no confirmation needed for these steps. The push at 
     EOF
     )"
     ```
-- Commit on whatever branch the current worktree is on. Don't switch branches yet.
+- Commit on `main`.
 
-### 4. Worktree → main merge
-
-If the session ran in a worktree (the load-bearing case under the canonical workflow):
-
-- Locate the main repo path via `git worktree list`. It's the entry without a bracketed branch override or the one matching `[main]`.
-- Switch the main repo to `main` (it should already be there; verify).
-- If the main repo has untracked files that would block the merge — usually the dual-path duplicates flagged in triage — discard those copies (`rm <files>`) after confirming with the user. They're stale; the worktree's committed version is canonical.
-- Merge the worktree's branch into main: `git merge <branch>`. Prefer fast-forward (`--ff-only`) when the branches haven't diverged. If main has moved since the worktree forked, allow a merge commit (`--no-ff` or default).
-- After the merge succeeds, ask the user before removing the worktree (`git worktree remove <path>`) and deleting the merged branch (`git branch -d <branch>`). The user might want to keep the worktree for follow-up work.
-
-If the session ran directly on main (no worktree), skip this step.
-
-### 5. Confirmation gate: PUSH
+### 4. Confirmation gate: PUSH
 
 This is the **only** step you don't do autonomously. Push is irreversible (in practice — force-push to rewind is destructive and you don't do that). Always confirm.
 
@@ -106,7 +90,7 @@ Wait for explicit user confirmation ("yes" / "push" / "go" / "OK"). Anything amb
 
 Push only after the OK lands. Use `git push origin main` — do not use `--force` or `--force-with-lease` unless the user explicitly asked (and even then, never to `main`).
 
-### 6. Verify
+### 5. Verify
 
 After push succeeds:
 
@@ -115,7 +99,7 @@ After push succeeds:
 
 Report success terse, in one or two lines:
 
-> Pushed N commits to origin/main (HEAD: efa4084). Worktree on `claude/nifty-knuth-34a385` merged and removed.
+> Pushed N commits to origin/main (HEAD: efa4084).
 
 ## Refusal triggers
 
@@ -125,7 +109,7 @@ You refuse and surface to the user when:
 - The diff includes content that looks like an API key, OAuth token, password, or other credential material.
 - A force-push to `main` would be required. Force-push to main is never autonomous; flag, surface the alternative path (revert commit, fresh commit), and let the user decide.
 - The working tree is in an unexpected non-clean state you didn't put it in — mid-rebase, mid-merge, conflict markers, detached HEAD.
-- The current branch is something other than `main` or a recognizable worktree branch and the user hasn't explained why.
+- The current branch is something other than `main` and the user hasn't explained why.
 - The push would target a remote other than `origin` or a branch other than `main`.
 
 ## Rules of engagement

@@ -1,6 +1,6 @@
 # Dark Filaments — Engineering Plan: Long-Burn v1 (Dev-Tool Remodel)
 
-> **Status:** locked plan for the next several weeks of engineering work. Synthesizes the engineering-director and sim-tuner specs into a single executable sequence. Updated 2026-05-12.
+> **Status:** Canonical for its scope. Authored 2026-05-12; status note updated 2026-05-21. The **core calibration apparatus is complete and in active use** (E1 / E3 / S1 / S2 / S3 / S4 landed — the harness drives every tier retune). The remaining dev-tooling phases are **deferred**: E2 (token codec), E4 (dev time-skip), E5 (token UX), S5 (top-down tooling), S6 (baseline calibration sweep). The engineering workstream has moved to the real `game/` scaffold ([engineering-plan-scaffold-v0.1.md](engineering-plan-scaffold-v0.1.md)) — a separate track, NOT a wholesale replacement of this plan. The deferred phases remain revivable on the `Prototype/` calibration tool if wanted.
 
 > **Scope (load-bearing):** v1 is a **dev-tool remodel**, not a shippable build. Everything here is calibration infrastructure. Player-facing polish lands in a later pass when we move toward shipping.
 

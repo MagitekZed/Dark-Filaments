@@ -2,11 +2,12 @@
 
 > Implementation-side reference for what the React + Three.js scaffold can render with code only — no custom art assets, only publicly available libraries. Companion to [visual-design.md](visual-design.md), which holds the locked aesthetic intent; this doc maps that intent onto the technical surface and is refreshed as the scaffold takes shape.
 
-**Version 0.1 · Last updated 2026-05-13**
+**Version 0.2 · Last updated 2026-05-21**
 
 ## Changelog
 
-- **0.1 (current)** — Initial code-only capability scoping. Converged opinion of `engineering-director` (technical feasibility + library landscape) and `creative-director` (aesthetic direction the constraint should drive us toward). Captured during a parallel scoping session while T4 numerical calibration ran on its own track.
+- **0.2 (current)** — **2026-05-21 renderer lock to WebGL2 (rules-guardian-vetted tech-stack revision).** §5 library-shortlist renderer caveat and §9 open-flag both updated from "recommended course at scaffold-start" to **RESOLVED**: WebGL2 is locked (standard Three.js GLSL via React Three Fiber, as `experiments/galaxy-spike/` already uses); WebGPU/TSL is reserved only for graphical needs that prove unbuildable in WebGL2; no dual-renderer or fallback path is maintained. Decision informed by the galaxy-spike experiment plus a Samsung S22 Ultra production-bundle device test. All logarithmic-depth-buffer content (`logarithmicDepthBuffer` in §7) kept verbatim — WebGL2-native engineering guidance. No capability claim or build-sketch changed.
+- **0.1** — Initial code-only capability scoping. Converged opinion of `engineering-director` (technical feasibility + library landscape) and `creative-director` (aesthetic direction the constraint should drive us toward). Captured during a parallel scoping session while T4 numerical calibration ran on its own track.
 
 ---
 
@@ -62,7 +63,7 @@ The recommended stack, with one-line rationales:
 - **Raw `three`** for the hot inner loops: custom `BufferGeometry`, `ShaderMaterial`, instanced mesh attribute buffers.
 - **Skip `lygia` and `gl-noise` initially.** Vendor inline the 3-4 noise functions actually needed (simplex 2D, simplex 3D, hash, smoothstep). Smaller surface, no dependency churn.
 
-The WebGPU/TSL caveat: classic Three.js GLSL fragment/vertex shaders are the right commitment for v1. WebGPU mobile support is uneven through 2026 and TSL is still churning. The locked tech stack in [CLAUDE.md](../CLAUDE.md) lists "Three.js with WebGPU/TSL" as aspirational; a rules-guardian-vetted revision to "Three.js with classic GLSL fragment/vertex shaders" is the recommended course at scaffold-start. See §9 below for the open flag.
+The renderer commitment (**RESOLVED 2026-05-21**): WebGL2 is locked — standard Three.js (classic GLSL fragment/vertex shaders) via React Three Fiber, as `experiments/galaxy-spike/` already uses. WebGPU/TSL is reserved only for specific graphical needs that prove unbuildable in WebGL2; no dual-renderer or fallback path is maintained in the meantime. WebGPU mobile support is uneven through 2026 and TSL is still churning, while WebGL2 has ~97-98% mobile reach and 15+ years of GLSL cosmic-particle/nebula/starfield precedent. The locked tech stack in [CLAUDE.md](../CLAUDE.md) now reads "Three.js (WebGL2) via React Three Fiber"; the rules-guardian-vetted revision landed on 2026-05-21 (it had been flagged here as the recommended course at scaffold-start). See §9 below — the open flag is now resolved.
 
 ---
 
@@ -119,7 +120,7 @@ The practical risk: early build sessions naturally gravitate toward shader and p
 ## 9. Known drifts and open questions
 
 - **Peak-tier renumber drift in [visual-design.md](visual-design.md).** §3, §10, and §11 still phrase the peak as "Tier 5" — predates the 2026-05-13 11-tier reshape, under which the peak is T6 Local Group. The fix is a renumber-proof rephrasing pass following the convention already established in [CLAUDE.md](../CLAUDE.md) load-bearing rules (*"the PEAK tier"* instead of *"Tier 5"*). A doc-keeper follow-up has been flagged for this; tracked separately so the diff stays reviewable on its own.
-- **WebGPU/TSL → classic GLSL stack revision.** [CLAUDE.md](../CLAUDE.md) lists "Three.js with WebGPU/TSL" as part of the locked tech stack. Engineering-director's recommendation is to commit to classic Three.js GLSL fragment/vertex shaders for v1 — WebGPU mobile support is uneven through 2026, TSL is still churning, and the cosmic-particle/nebula/starfield work the project needs has 15+ years of GLSL precedent. A rules-guardian follow-up has been flagged to surface the tradeoff to the user at scaffold-start. Not a decision for today; surfaced when it actually matters.
+- **WebGPU/TSL → WebGL2 stack revision (RESOLVED 2026-05-21).** [CLAUDE.md](../CLAUDE.md) previously listed "Three.js with WebGPU/TSL" as part of the locked tech stack. The rules-guardian-vetted revision landed 2026-05-21: **WebGL2 is locked** (standard Three.js GLSL via React Three Fiber, as `experiments/galaxy-spike/` already uses); **WebGPU/TSL is reserved** only for specific graphical needs that prove unbuildable in WebGL2; **no dual-renderer or fallback path is maintained** in the meantime. What clinched it: the galaxy-spike experiment already renders the intended visual in plain WebGL2, and a production-bundle real-device test on a Samsung S22 Ultra ran "smooth as butter, PLENTY of performance room"; WebGL2's ~97-98% mobile reach serves the user's "most robust stack on most modern devices" position better than WebGPU's uneven 2026 coverage. rules-guardian confirmed no load-bearing design rule depends on WebGPU/TSL. The escape hatch stays open: if a future graphical element proves unbuildable in WebGL2, WebGPU can be revisited via the same vetting.
 - **Mood-board touchstones to keep nearby.** Millennium Simulation and IllustrisTNG cosmic-web renders (the right register for T7-T9 and the final tier). Iñigo Quilez and Shadertoy galaxy + volumetric-nebula entries (the right ceiling for T4 anchor work). EVE Online star map for sparse blue-white abstraction at large scales; Bruno Simon-tier interactive WebGL polish for the *interaction* quality — click feedback, camera moves, the signal that this is craft rather than a toy.
 
 ---

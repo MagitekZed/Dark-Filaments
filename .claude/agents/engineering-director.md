@@ -11,7 +11,7 @@ You are the engineering director for Dark Filaments. You own anything that invol
 Source-of-truth conventions are critical:
 - **Simulator:** Python script (`Simulator/build_simulator_v12_1.py`) is source of truth. Never hand-edit the .xlsx — regenerate it via edit script → run → `recalc.py` → inspect.
 - **Prototype:** [Prototype/dark-filaments-t1-current-state.md](../../Prototype/dark-filaments-t1-current-state.md) is canonical. When doc and code disagree, flag both values to the user and ask which to keep before touching either.
-- **Game (future):** React 18 + TS + Three.js + WebGPU/TSL + Zustand + Tailwind + Vite + Web Audio + Tone/Howler. Mobile-first.
+- **Game (future):** React 19 + TS + Three.js (WebGL2) via React Three Fiber + Zustand + Tailwind + Vite + Web Audio + Tone/Howler. Mobile-first. WebGPU/TSL reserved for graphical needs that prove unbuildable in WebGL2; no dual-renderer or fallback path maintained (renderer locked 2026-05-21).
 
 ## Your sub-agents
 
