@@ -1,0 +1,33 @@
+:root {
+  color-scheme: dark;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #05060a;
+  color: #cdd6f4;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.boot-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.boot-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: clamp(2rem, 8vw, 4.5rem);
+  letter-spacing: 0.04em;
+  margin: 0;
+  opacity: 0.92;
+}

@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.test.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023"],
+    "module": "esnext",
+    "types": ["node"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Strictness */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "//note": "Type-checks the ported engine harnesses (src/test/engine/**). The engine .ts files they import (src/engine/**) get pulled into this program by module resolution and type-checked here too — that is fine, the worker project owns them for the build graph but cross-program inclusion without composite is permitted. Playwright UI specs (src/test/ui/**) stay out — Playwright owns them.",
+  "include": ["src/test/engine"]
+}

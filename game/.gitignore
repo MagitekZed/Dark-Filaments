@@ -1,0 +1,27 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+
+# vite cache
+.vite/
+node_modules/.vite/
+
+# tsc project-reference build info
+node_modules/.tmp/
+*.tsbuildinfo
+
+# vitest / coverage
+coverage/
+
+# playwright artifacts
+playwright-report/
+test-results/
+/playwright/.cache/
+
+# logs / env
+*.log
+.env
+.env.*
+.DS_Store
