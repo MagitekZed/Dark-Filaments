@@ -21,6 +21,6 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "//include-note": "engine.worker.ts is added to this include in G2 when it exists; for now the worker-pure engine/ dir is the only input.",
-  "include": ["src/engine"]
+  "//include-note": "G2: the Worker (engine.worker.ts) + the shared postMessage contract (protocol.ts) compile under the WebWorker libs alongside the pure engine. protocol.ts type-only imports the engine barrel; engine.worker.ts imports engine runtime — both stay DOM-free. engineClient.ts + the store run on the MAIN thread under tsconfig.app.json (DOM libs).",
+  "include": ["src/engine", "src/workers/engine.worker.ts", "src/workers/protocol.ts"]
 }

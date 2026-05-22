@@ -1,10 +1,9 @@
-// G0 skeleton: proves the React + Vite + TS toolchain boots. No scene, no
-// engine, no store yet — those attach in G1+ per the scaffold plan. The title
-// vs running-game route gate (plan §3) lands when there is a game to route to.
+// G2: the throwaway debug readout proves the Worker + store + optimistic-click
+// loop end-to-end before any real UI exists. The title vs running-game route
+// gate (plan §3) and the real chrome land in G4/G5; DebugReadout is removed
+// then.
+import DebugReadout from './DebugReadout'
+
 export default function App() {
-  return (
-    <main className="boot-shell">
-      <h1 className="boot-title">Dark Filaments</h1>
-    </main>
-  )
+  return <DebugReadout />
 }

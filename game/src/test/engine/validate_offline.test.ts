@@ -17,6 +17,7 @@ import { describe, it, expect } from 'vitest';
 import * as offline from '../../engine/offline';
 import * as runner from '../../engine/runner';
 import { UPGRADES, DEFAULT_PARAMS } from '../../engine/data';
+import { prepareReInit } from '../../workers/engineCore';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
@@ -241,12 +242,89 @@ function freshT1SavedState(): Any {
   }
 }
 
+// 8. Re-INIT handoff parity (scaffold §4.3 / §12.1 — the highest-attention
+//    gotcha). The Worker's offline→live handoff goes through prepareReInit
+//    (workers/engineCore.ts). The boundary-second discipline guarantee: a
+//    continuous N-second offline window must equal the SAME window split into
+//    two re-INIT segments — no double-counting of the boundary second across
+//    the handoff. We seed an MPS source so there is real accrual to compare.
+{
+  function seedWithMps(): Any {
+    const s = freshT1SavedState();
+    s.mass = 1000;
+    // Owned T1 MPS sources so pure-idle accrual is non-trivial: Solar Wind
+    // (addMps 0.00013), Asteroid Belt (addMps 0.00033), Magnetosphere (addMps
+    // 0.00167). Orbital Resonance (allMps ×1.25) so the all-mult path is also
+    // exercised across the handoff, not just flat additive income.
+    s.levels['Solar Wind'] = 7;
+    s.levels['Asteroid Belt'] = 5;
+    s.levels['Magnetosphere'] = 4;
+    s.levels['Orbital Resonance'] = 1;
+    return s;
+  }
+
+  const TOTAL = 600;
+  const SPLIT_A = 250;
+  const SPLIT_B = TOTAL - SPLIT_A; // 350
+
+  // Continuous: one prepareReInit over the full window.
+  const continuous = prepareReInit(seedWithMps(), TOTAL);
+  const continuousMass = continuous.state.mass;
+
+  // Split: re-INIT once over the first segment, then re-INIT the resulting
+  // state over the second segment — exactly the Worker's offline→live→offline
+  // handoff sequence. The boundary second between segments must NOT be double-
+  // counted.
+  const seg1 = prepareReInit(seedWithMps(), SPLIT_A);
+  const seg2 = prepareReInit(seg1.state, SPLIT_B);
+  const splitMass = seg2.state.mass;
+
+  check('re-INIT handoff: continuous accrued mass (' + continuousMass.toFixed(6) + ') > seed',
+    continuousMass > 1000,
+    'continuousMass=' + continuousMass);
+
+  const handoffDelta = Math.abs(continuousMass - splitMass);
+  const handoffPct = continuousMass > 0 ? handoffDelta / continuousMass : 0;
+  check('re-INIT handoff: split (' + splitMass.toFixed(6) + ') == continuous (' + continuousMass.toFixed(6) + ') within 0.1%',
+    handoffPct <= 0.001,
+    'delta=' + handoffDelta.toExponential(4) + ' pct=' + (handoffPct * 100).toFixed(6) + '%');
+
+  // Tick accounting: continuous reports TOTAL ticks; split segments sum to
+  // TOTAL. If the boundary second were double-counted, the split's ticks would
+  // exceed continuous's.
+  check('re-INIT handoff: continuous window ticks = ' + TOTAL,
+    continuous.offlineReturn != null && continuous.offlineReturn.elapsedSec === TOTAL,
+    'elapsedSec=' + (continuous.offlineReturn ? continuous.offlineReturn.elapsedSec : 'null'));
+  const splitTicks = (seg1.offlineReturn?.elapsedSec ?? 0) + (seg2.offlineReturn?.elapsedSec ?? 0);
+  check('re-INIT handoff: split window ticks sum to ' + TOTAL + ' (no boundary double-count)',
+    splitTicks === TOTAL,
+    'seg1=' + (seg1.offlineReturn?.elapsedSec ?? 0) + ' seg2=' + (seg2.offlineReturn?.elapsedSec ?? 0));
+
+  // state=null → fresh universe, no offlineReturn (boot of a brand-new game).
+  const fresh = prepareReInit(null, 0);
+  check('re-INIT handoff: state=null -> fresh T1 (mass 0, tier 1, no offlineReturn)',
+    fresh.state.mass === 0 && fresh.state.currentTier === 1 && fresh.offlineReturn === null);
+
+  // offlineSec <= 0 → clone-through, no accrual, no offlineReturn.
+  const zero = prepareReInit(seedWithMps(), 0);
+  check('re-INIT handoff: offlineSec=0 -> no accrual, no offlineReturn',
+    Math.abs(zero.state.mass - 1000) <= 1e-9 && zero.offlineReturn === null,
+    'mass=' + zero.state.mass);
+
+  // Purity: prepareReInit does not mutate its input state.
+  const seedForPurity = seedWithMps();
+  const seedSnapshot = JSON.stringify(seedForPurity);
+  prepareReInit(seedForPurity, TOTAL);
+  check('re-INIT handoff: prepareReInit does not mutate input state',
+    JSON.stringify(seedForPurity) === seedSnapshot);
+}
+
 // -----------------------------------------------------------------------
 // Surface every collected check as a Vitest test + assert the locked count.
 // -----------------------------------------------------------------------
-describe('validate_offline (ported, locked count 38)', () => {
-  it('runs exactly 38 checks (locked spec count, unchanged from prototype)', () => {
-    expect(RESULTS.length).toBe(38);
+describe('validate_offline (ported, locked count 38 + 7 re-INIT handoff = 45)', () => {
+  it('runs exactly 45 checks (38 ported + 7 G2 re-INIT handoff parity, §4.3/§12.1)', () => {
+    expect(RESULTS.length).toBe(45);
   });
   it.each(RESULTS.map((r, i) => [i, r] as const))('%i: %o', (_i, r) => {
     expect(r.ok, r.name + (r.detail ? '  — ' + r.detail : '')).toBe(true);
