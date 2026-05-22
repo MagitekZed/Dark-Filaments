@@ -48,4 +48,49 @@ export default defineConfig([
       'no-restricted-imports': ['error', { patterns: engineForbiddenPatterns }],
     },
   },
+  // R3F render layer (scaffold §6.1: "components move verbatim — they're clean
+  // R3F, hardware-proven; preserve the seeded-RNG + primitive-useMemo-deps
+  // pattern exactly"). eslint-plugin-react-hooks v7 ships the React-Compiler
+  // purity/immutability rules, which are fundamentally incompatible with the
+  // R3F idiom: useFrame callbacks MUST mutate refs/objects every frame, and the
+  // procedural generators legitimately call Math.random() (seeded or per-frame).
+  // These are the proven patterns the absorption is told to preserve verbatim,
+  // not bugs. We turn off only the compiler-style rules here; rules-of-hooks +
+  // exhaustive-deps still apply. Scene files also legitimately co-export
+  // authoring constants (PLANETS, sceneParamsForTier, …) and the registry
+  // component lookup, so react-refresh/only-export-components and
+  // static-components are relaxed for this layer too.
+  {
+    files: ['src/scene/**/*.{ts,tsx}'],
+    rules: {
+      'react-hooks/purity': 'off',
+      'react-hooks/immutability': 'off',
+      'react-hooks/refs': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/static-components': 'off',
+      'react-refresh/only-export-components': 'off',
+      // The spike's reset-then-recompute patterns (e.g. dx/dy/dz reused after a
+      // guard) read as "useless assignment" to the linter but are intentional.
+      'no-useless-assignment': 'off',
+    },
+  },
+  // Scene-reads-store seam (scaffold §12.7): scene modules read engine state via
+  // the store/selectors, NEVER the Worker. The ONE sanctioned exception is the
+  // tap-handler wiring in CosmicCanvas (sendClick). This rule blocks every other
+  // scene module from importing workers/ (engineClient / engine.worker /
+  // protocol). CosmicCanvas is exempted by the override below.
+  {
+    files: ['src/scene/**/*.{ts,tsx}'],
+    ignores: ['src/scene/CosmicCanvas.tsx'],
+    rules: {
+      'no-restricted-imports': ['error', {
+        patterns: [
+          {
+            group: ['**/workers/**', '../workers', '../../workers'],
+            message: 'scene/** reads the STORE, never the Worker (§12.7). Only CosmicCanvas wires the tap handler (sendClick).',
+          },
+        ],
+      }],
+    },
+  },
 ])

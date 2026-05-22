@@ -1,12 +1,20 @@
-// DebugReadout.tsx — THROWAWAY G2 verification surface. DELETE in G5.
+// DebugReadout.tsx — THROWAWAY G2/G4 verification overlay. DELETE in G5.
 //
-// Proves the Worker + store + optimistic-click loop end-to-end before any real
-// UI exists. Shows live mass / mps / mpc / aps / tier / consolidation, plus:
-//   - Tap        → sendClick (optimistic reflectClick + worker CLICK)
+// G4: reshaped from a full-screen panel into a compact fixed corner overlay
+// layered OVER the cosmic scene (CosmicCanvas). The container is
+// pointer-events:none so taps fall through to the canvas (which fires the
+// CLICK + pull particle); only the control panel itself captures pointer
+// events for the buy/tier-up/pause buttons.
+//
+// Proves the Worker + store + optimistic-click loop end-to-end. Shows live
+// mass / mps / mpc / aps / tier / consolidation, plus:
+//   - Tap        → tap the scene (CosmicCanvas wires sendClick + pull particle)
 //   - Buy first  → sendBuy on the first affordable upgrade (PURCHASE_OK or
 //                  PURCHASE_REJECTED if it raced unaffordable)
 //   - Tier up    → sendTierUp (composeCarryChain recompose into the next tier)
 //   - Pause      → sendPause toggle
+//   - Tap (CLICK)→ a direct sendClick button, kept for headless verification
+//                  where no real pointer hits the canvas
 //
 // This is NOT prose-first chrome and breaks the two-voice rules deliberately —
 // it is a developer instrument, exempt under the dev-tooling carve-out, and is
@@ -55,10 +63,18 @@ export default function DebugReadout() {
 
   return (
     <div style={{
-      fontFamily: 'monospace', padding: '1.5rem', color: '#cde',
-      background: '#0a0d14', minHeight: '100vh', lineHeight: 1.6,
+      position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 50,
     }}>
-      <h2 style={{ color: '#8ab', marginTop: 0 }}>Dark Filaments — G2 debug loop (throwaway)</h2>
+    <div style={{
+      position: 'fixed', top: 12, left: 12, pointerEvents: 'auto',
+      fontFamily: 'monospace', padding: '0.85rem 1rem', color: '#cde',
+      background: 'rgba(10, 13, 20, 0.72)', backdropFilter: 'blur(6px)',
+      border: '1px solid #1d2839', borderRadius: 8, lineHeight: 1.55,
+      fontSize: 12, maxWidth: 340,
+    }}>
+      <h2 style={{ color: '#8ab', marginTop: 0, marginBottom: 6, fontSize: 13 }}>
+        Dark Filaments — G4 debug overlay (throwaway)
+      </h2>
       <table style={{ borderCollapse: 'collapse' }}>
         <tbody>
           <tr><td style={cellL}>mass</td><td style={cellR}>{fmt(mass)} M☉</td></tr>
@@ -98,12 +114,13 @@ export default function DebugReadout() {
         </p>
       )}
 
-      <div style={{ marginTop: '1rem' }}>
+      <div style={{ marginTop: '0.6rem' }}>
         <strong style={{ color: '#8ab' }}>owned levels:</strong>{' '}
         {ownedLevels.length
           ? ownedLevels.map(([name, n]) => `${name}=${n}`).join('  ')
           : '(none)'}
       </div>
+    </div>
     </div>
   );
 }
@@ -111,6 +128,7 @@ export default function DebugReadout() {
 const cellL: React.CSSProperties = { padding: '2px 16px 2px 0', color: '#789' };
 const cellR: React.CSSProperties = { padding: '2px 0', color: '#cde' };
 const btn: React.CSSProperties = {
-  marginRight: '0.5rem', padding: '0.5rem 1rem', background: '#1a2434',
-  color: '#cde', border: '1px solid #2a3a52', borderRadius: 4, cursor: 'pointer',
+  marginRight: '0.35rem', marginBottom: '0.35rem', padding: '0.35rem 0.6rem',
+  background: '#1a2434', color: '#cde', border: '1px solid #2a3a52',
+  borderRadius: 4, cursor: 'pointer', fontSize: 11,
 };

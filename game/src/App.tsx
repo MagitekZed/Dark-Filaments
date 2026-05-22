@@ -1,23 +1,33 @@
-// G3: boot the engine through the persistence path (store/persistence.ts) once
-// at app mount — restore from a v5 localStorage save with the patient-universe
-// offline accrual, or start a fresh universe. boot() is idempotent (guards the
-// StrictMode double-mount), so the bare module-level call is safe; we keep it in
-// an effect so it runs after the first render commit.
+// App.tsx — G4: mount the cosmic scene (CosmicCanvas) as the world, with a
+// minimal debug overlay layered on top for state visibility + the buy/tier-up
+// controls until G5's real chrome lands.
 //
-// The throwaway debug readout proves the loop end-to-end before any real UI
-// exists. The title vs running-game route gate (plan §3) and the real chrome
-// land in G4/G5; DebugReadout is removed then.
-import { useEffect } from 'react'
-import DebugReadout from './DebugReadout'
-import { boot } from './store/persistence'
+// Boot path (G3): persistence.boot() restores from a v5 localStorage save with
+// the patient-universe offline accrual, or starts a fresh universe. boot() is
+// idempotent (StrictMode double-mount guard), so the bare call in the effect is
+// safe.
+//
+// The scene fills the viewport (CosmicCanvas is position:fixed inset:0). The
+// debug overlay (DevOverlay) is a small fixed panel — NOT prose-first chrome;
+// it is a developer instrument, exempt under the dev-tooling carve-out, and is
+// removed when GameChrome lands in G5. Tapping the scene fires a CLICK + a pull
+// particle (wired in CosmicCanvas); the overlay carries buy/tier-up/pause since
+// those have no scene affordance yet.
+
+import { useEffect } from 'react';
+import { CosmicCanvas } from './scene/CosmicCanvas';
+import DevOverlay from './DebugReadout';
+import { boot } from './store/persistence';
 
 export default function App() {
   useEffect(() => {
-    // Idempotent: under StrictMode this effect fires twice in dev, but boot()
-    // no-ops on the second call (the `booted` guard), so the worker is INITed
-    // exactly once.
-    boot()
-  }, [])
+    boot();
+  }, []);
 
-  return <DebugReadout />
+  return (
+    <>
+      <CosmicCanvas />
+      <DevOverlay />
+    </>
+  );
 }
