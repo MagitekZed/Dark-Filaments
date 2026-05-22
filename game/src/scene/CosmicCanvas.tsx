@@ -32,7 +32,7 @@ import { sceneParamsForTier } from './sceneParams';
 import { firePull } from './feedback/pullEvents';
 import { useStore } from '../store';
 import { useShallow } from 'zustand/react/shallow';
-import { selectTier, selectRecentTierUp } from '../store/selectors';
+import { selectTier, selectRecentTierUp, selectForcedTier } from '../store/selectors';
 // THE single sanctioned engineClient import in the scene layer (§6.2 tap wiring).
 import { sendClick } from '../workers/engineClient';
 
@@ -42,9 +42,17 @@ interface ActiveTransition {
 }
 
 export function CosmicCanvas() {
-  const tier = useStore(selectTier);
+  const engineTier = useStore(selectTier);
+  const forcedTier = useStore(selectForcedTier);
   const recentTierUp = useStore(useShallow(selectRecentTierUp));
   const freeOrbit = useStore((s) => s.freeOrbit);
+
+  // The dev SceneSwitcher (G6) can force-mount any tier's scene for authoring,
+  // independent of the live engine tier. forcedTier wins when set; otherwise the
+  // engine drives the mounted tier. forcedTier is only ever set from the
+  // import.meta.env.DEV-gated dev route, so shipped play always sees the engine
+  // tier. A forced mount is a direct swap — no transition cinematic.
+  const tier = forcedTier ?? engineTier;
 
   // The tier whose scene is currently mounted. While a cinematic is playing,
   // this lags behind the engine tier until onComplete swaps it.
@@ -53,17 +61,20 @@ export function CosmicCanvas() {
   const lastHandledTierUpRef = useRef<string | null>(null);
 
   // When the engine reports a tier-up, kick off the cinematic. recentTierUp may
-  // repeat across snapshots, so dedup by from->to key.
+  // repeat across snapshots, so dedup by from->to key. Suppressed while a tier
+  // is force-mounted (authoring view should not play game cinematics).
   useEffect(() => {
+    if (forcedTier != null) return;
     if (!recentTierUp) return;
     const key = `${recentTierUp.fromTier}->${recentTierUp.toTier}`;
     if (lastHandledTierUpRef.current === key) return;
     lastHandledTierUpRef.current = key;
     setActiveTransition({ fromTier: recentTierUp.fromTier, toTier: recentTierUp.toTier });
-  }, [recentTierUp]);
+  }, [recentTierUp, forcedTier]);
 
-  // If the engine tier jumps without a tier-up cinematic (e.g. a dev SKIP_TO_TIER
-  // or a save restore at a higher tier), mount it directly.
+  // If the resolved tier jumps without a tier-up cinematic (e.g. a dev
+  // SKIP_TO_TIER, a forced-tier authoring jump, or a save restore at a higher
+  // tier), mount it directly.
   useEffect(() => {
     if (activeTransition) return;
     if (tier !== mountedTier) setMountedTier(tier);

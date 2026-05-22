@@ -65,3 +65,10 @@ export const selectRecentTierUp = (s: GameStore) => s.snapshot?.recentTierUp ?? 
 export const selectOfflineReturn = (s: GameStore) => s.snapshot?.offlineReturn ?? null;
 
 export const selectPaused = (s: GameStore): boolean => s.snapshot?.paused ?? false;
+
+// Dev: the SceneSwitcher force-mount tier. null → CosmicCanvas falls back to the
+// live engine tier (selectTier). Non-null → CosmicCanvas mounts that tier's
+// scene for authoring/inspection without progressing the game. The dev slice is
+// only ever set from the import.meta.env.DEV-gated dev route, so in production
+// this stays null (the slice still exists in the store shape, harmlessly).
+export const selectForcedTier = (s: GameStore): number | null => s.forcedTier;
