@@ -36,7 +36,10 @@ export const btn: CSSProperties = {
 export const btnActive: CSSProperties = {
   ...btn,
   background: '#2c4068',
-  borderColor: '#4a6aa0',
+  // Use the `border` shorthand (not `borderColor`) to override the inherited
+  // shorthand from `btn` — mixing shorthand + longhand trips React's
+  // "conflicting style property" warning on rerender.
+  border: '1px solid #4a6aa0',
   color: '#dfeaff',
 };
 

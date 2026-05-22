@@ -1,0 +1,1078 @@
+/* ─── chrome.css — Edge-Vignette in-game chrome (scaffold §3 / §6 / G5) ──
+ *
+ * Consolidates the galaxy-spike's *UIChrome.css surfaces into one shared
+ * sheet, driven by live engine state in game/. Two namespaces:
+ *
+ *   dfui-*    — the running-game Edge-Vignette chrome (was t1ui-* / t2ui-*).
+ *   titleui-* — the title screen + Return/Settings modal (ported verbatim
+ *               from the spike's TitleChrome.css).
+ *
+ * Each chrome element carries its own legibility solution (stroke + scrim for
+ * digits, blur pill for stats, shadowed bar for consolidation) so the chrome
+ * survives any background luminance. Persistent prose is clinical (Inter,
+ * no editorializing); fading narrator prose lives in NarratorSurface (serif,
+ * italic) — the two registers do not cross (Two-voice UI rule).
+ *
+ * Fonts: --df-serif / --df-sans tokens from fonts.css.
+ */
+
+@import './fonts.css';
+
+/* ─── Running-game chrome root — the Edge-Vignette shell ─────────────── */
+
+.dfui-root {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;       /* chrome is transparent to taps by default */
+  user-select: none;
+  -webkit-user-select: none;
+  z-index: 4;                 /* above the Canvas */
+  -webkit-tap-highlight-color: transparent;
+  /* Edge-vignette darkening — top and bottom of the viewport get a
+     perceptual anchor so the top-corner gear and bottom hairline stay
+     findable without high-alpha chrome. */
+  background:
+    linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.12) 0,
+      rgba(0, 0, 0, 0.00) 80px,
+      rgba(0, 0, 0, 0.00) calc(100% - 120px),
+      rgba(0, 0, 0, 0.10) 100%);
+}
+
+/* ─── Top-left: Mass counter ───────────────────────────────────────── */
+
+.dfui-mass {
+  position: absolute;
+  top: 22px;
+  left: 32px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.dfui-mass-scrim {
+  position: absolute;
+  inset: -10px -22px;
+  backdrop-filter: blur(8px) brightness(0.55);
+  -webkit-backdrop-filter: blur(8px) brightness(0.55);
+  mask-image: radial-gradient(
+    ellipse 60% 75% at 50% 55%,
+    rgba(0, 0, 0, 1.0) 0%,
+    rgba(0, 0, 0, 1.0) 35%,
+    rgba(0, 0, 0, 0.0) 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 60% 75% at 50% 55%,
+    rgba(0, 0, 0, 1.0) 0%,
+    rgba(0, 0, 0, 1.0) 35%,
+    rgba(0, 0, 0, 0.0) 100%
+  );
+}
+
+.dfui-mass-text {
+  position: relative;
+  font-family: var(--df-serif);
+  font-weight: 400;
+  font-size: 38pt;
+  line-height: 1.0;
+  color: #FFFFFF;
+  -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.6);
+  paint-order: stroke fill;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Top-left: Stats line (global readout — NOT an upgrade card) ───── */
+
+.dfui-stats {
+  position: absolute;
+  top: 86px;
+  left: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  padding: 4px 12px;
+  font-family: var(--df-sans);
+  font-weight: 350;
+  font-size: 11pt;
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(6px) brightness(0.7);
+  -webkit-backdrop-filter: blur(6px) brightness(0.7);
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 3;
+  font-variant-numeric: tabular-nums;
+}
+
+.dfui-stats .dfui-sep {
+  color: rgba(255, 255, 255, 0.30);
+  font-size: 0.85em;
+}
+
+/* ─── Top edge: Consolidation bar ──────────────────────────────────── */
+
+.dfui-consolidation {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.dfui-consolidation-track {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.dfui-consolidation-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.30);
+  transition: width 240ms ease-out;
+}
+
+.dfui-consolidation-glow {
+  position: absolute;
+  right: -4px;
+  top: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 200, 144, 0.45), rgba(255, 200, 144, 0) 70%);
+}
+
+/* ─── Bottom-right: Causal Connections (the unlabeled hidden number) ── */
+
+.dfui-causal {
+  position: absolute;
+  bottom: 22px;
+  right: 32px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.dfui-causal-scrim {
+  position: absolute;
+  inset: -6px -14px;
+  backdrop-filter: blur(8px) brightness(0.70);
+  -webkit-backdrop-filter: blur(8px) brightness(0.70);
+  mask-image: radial-gradient(
+    ellipse 60% 75% at 50% 55%,
+    rgba(0, 0, 0, 1.0) 0%,
+    rgba(0, 0, 0, 1.0) 30%,
+    rgba(0, 0, 0, 0.0) 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 60% 75% at 50% 55%,
+    rgba(0, 0, 0, 1.0) 0%,
+    rgba(0, 0, 0, 1.0) 30%,
+    rgba(0, 0, 0, 0.0) 100%
+  );
+}
+
+.dfui-causal-text {
+  position: relative;
+  font-family: var(--df-serif);
+  font-weight: 400;
+  font-size: 14pt;
+  line-height: 1.0;
+  color: rgba(255, 255, 255, 0.90);
+  -webkit-text-stroke: 0.4px rgba(0, 0, 0, 0.5);
+  paint-order: stroke fill;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Top-right: Settings gear ─────────────────────────────────────── */
+
+.dfui-settings {
+  position: absolute;
+  top: 28px;
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 6;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dfui-settings svg {
+  width: 16px;
+  height: 16px;
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 1.25;
+  fill: none;
+  transition: stroke 180ms ease;
+}
+
+.dfui-settings:hover svg {
+  stroke: rgba(255, 255, 255, 0.70);
+}
+
+.dfui-settings:focus-visible {
+  outline: 1px solid rgba(110, 192, 217, 0.8);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+/* ─── Bottom-center: click verb + upgrade affordance ───────────────── */
+
+.dfui-bottom {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.dfui-click-verb {
+  font-family: var(--df-sans);
+  font-weight: 400;
+  font-size: 10pt;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.0;
+}
+
+.dfui-upgrade-hairline {
+  width: 56px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.22);
+  transition: background 1800ms cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.dfui-bottom.dfui-breathing .dfui-upgrade-hairline {
+  animation: dfui-hairline-breathe 1800ms cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes dfui-hairline-breathe {
+  0%, 100% { background: rgba(255, 255, 255, 0.22); }
+  50%      { background: rgba(255, 255, 255, 0.48); }
+}
+
+.dfui-upgrade-hint {
+  font-family: var(--df-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 9pt;
+  color: rgba(255, 255, 255, 0.40);
+  letter-spacing: 0.02em;
+  line-height: 1.0;
+  opacity: 0;
+  transition: opacity 600ms ease-out;
+}
+
+.dfui-upgrade-hint.dfui-visible {
+  opacity: 1;
+}
+
+/* Invisible hit target that opens the upgrade sheet — sits over the
+   bottom-center cluster. */
+.dfui-upgrade-hit {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 88px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 5;
+}
+
+/* ─── Consolidate affordance — appears when the gate is ready ───────── */
+
+.dfui-consolidate {
+  position: absolute;
+  left: 50%;
+  bottom: 120px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+  z-index: 5;
+  opacity: 0;
+  animation: dfui-consolidate-in 1400ms ease-out forwards;
+}
+
+@keyframes dfui-consolidate-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.dfui-consolidate-btn {
+  font-family: var(--df-sans);
+  font-weight: 400;
+  font-size: 10pt;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 232, 200, 0.92);
+  background: rgba(10, 14, 26, 0.30);
+  backdrop-filter: blur(18px) brightness(0.55);
+  -webkit-backdrop-filter: blur(18px) brightness(0.55);
+  border: 1px solid rgba(255, 200, 144, 0.40);
+  border-radius: 999px;
+  padding: 12px 36px;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: border-color 280ms ease-out, color 280ms ease-out, box-shadow 280ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dfui-consolidate-btn:hover {
+  border-color: rgba(255, 200, 144, 0.75);
+  color: #FFFFFF;
+  box-shadow: inset 0 0 24px rgba(255, 200, 144, 0.18);
+}
+
+.dfui-consolidate-btn:focus-visible {
+  outline: 2px solid rgba(110, 192, 217, 0.8);
+  outline-offset: 4px;
+}
+
+/* ─── First-tap onboarding cue — center point + click verb ─────────── */
+
+.dfui-first-cue {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 800ms ease-out;
+}
+
+.dfui-first-cue.dfui-fading {
+  opacity: 0;
+}
+
+.dfui-first-cue-point {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.70);
+  animation: dfui-cue-breathe 2400ms ease-in-out infinite;
+}
+
+@keyframes dfui-cue-breathe {
+  0%, 100% { background: rgba(255, 255, 255, 0.70); }
+  50%      { background: rgba(255, 255, 255, 0.40); }
+}
+
+.dfui-first-cue-verb {
+  font-family: var(--df-sans);
+  font-weight: 400;
+  font-size: 9pt;
+  color: rgba(255, 255, 255, 0.45);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 1.0;
+}
+
+/* ─── Upgrade sheet — rises from bottom on open ────────────────────── */
+
+.dfui-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 55%;
+  background: rgba(0, 0, 0, 0.40);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transform: translateY(100%);
+  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 7;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.dfui-sheet.dfui-open {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.dfui-sheet-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .dfui-sheet {
+    height: 70%;
+    padding: 20px 16px;
+  }
+  .dfui-sheet-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tap-outside-to-close — invisible scrim above the scene, below the
+   sheet, only active when the sheet is open. */
+.dfui-sheet-close-zone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 55%;
+  background: transparent;
+  border: 0;
+  cursor: default;
+  pointer-events: auto;
+  z-index: 6;
+}
+
+@media (max-width: 768px) {
+  .dfui-sheet-close-zone {
+    bottom: 70%;
+  }
+}
+
+/* ─── Upgrade card — prose-first, four fields only ─────────────────── */
+/*
+ * Exactly four content fields: name / clinical one-line description / cost /
+ * level. NO efficiency badges, MPS summaries, ROI, sort markers, best-buy
+ * cues — see the prose-first load-bearing rule. The affordability glow is the
+ * single permitted "within reach" cue: a subtle warmth on the top hairline +
+ * the cost color, identical for every affordable card, not animated past the
+ * first-affordable moment.
+ */
+
+.dfui-card {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  background: transparent;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  text-align: left;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  cursor: default;
+  transition: border-color 220ms ease;
+}
+
+.dfui-card.dfui-affordable {
+  border-top-color: rgba(255, 200, 144, 0.30);
+  cursor: pointer;
+}
+
+.dfui-card.dfui-affordable:hover {
+  border-top-color: rgba(255, 200, 144, 0.55);
+}
+
+.dfui-card:focus-visible {
+  outline: 1px solid rgba(110, 192, 217, 0.7);
+  outline-offset: 2px;
+}
+
+.dfui-card-name {
+  font-family: var(--df-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 18pt;
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.1;
+}
+
+.dfui-card-desc {
+  font-family: var(--df-serif);
+  font-weight: 400;
+  font-size: 14pt;
+  color: rgba(255, 255, 255, 0.70);
+  line-height: 1.25;
+  min-height: 1.25em;   /* hold layout when the clinical line is empty (TO-WRITE) */
+}
+
+.dfui-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 4px;
+}
+
+.dfui-card-cost {
+  font-family: var(--df-serif);
+  font-weight: 400;
+  font-size: 15pt;
+  color: rgba(255, 255, 255, 0.85);
+  font-variant-numeric: tabular-nums;
+  transition: color 1000ms ease-out;
+}
+
+.dfui-card.dfui-affordable .dfui-card-cost {
+  color: #E8B878;
+}
+
+.dfui-card-cost.dfui-terminal {
+  color: rgba(255, 255, 255, 0.45);
+  font-style: italic;
+  letter-spacing: 0.04em;
+}
+
+.dfui-card-level {
+  font-family: var(--df-serif);
+  font-weight: 400;
+  font-size: 12pt;
+  color: rgba(255, 255, 255, 0.50);
+  letter-spacing: 0.04em;
+}
+
+/* ─── Mobile: top-stack adjustments ───────────────────────────────── */
+
+@media (max-width: 480px) {
+  .dfui-mass {
+    top: 18px;
+    left: 18px;
+  }
+  .dfui-mass-text {
+    font-size: 26pt;
+  }
+  .dfui-stats {
+    top: 58px;
+    left: 18px;
+    font-size: 10pt;
+  }
+  .dfui-causal {
+    bottom: 76px;
+    right: 18px;
+  }
+  .dfui-causal-text {
+    font-size: 11pt;
+  }
+  .dfui-settings {
+    top: 18px;
+    right: 8px;
+  }
+}
+
+/* ─── Return surface — quiet welcome-back line ─────────────────────── */
+/*
+ * Load-bearing welcome-back rule: dignified, unannounced. No "+X while away"
+ * popup, no scroll animation. A single quiet held line, fading. Narrator
+ * register (serif, italic). It does NOT report numbers.
+ */
+
+.dfui-return {
+  position: absolute;
+  left: 50%;
+  top: 38%;
+  transform: translate(-50%, -50%);
+  max-width: 640px;
+  width: 86%;
+  text-align: center;
+  font-family: var(--df-serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 22pt;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.88);
+  -webkit-text-stroke: 0.4px rgba(0, 0, 0, 0.5);
+  paint-order: stroke fill;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0;
+}
+
+.dfui-return.dfui-return-in {
+  opacity: 1;
+  transition: opacity 1600ms ease-out;
+}
+
+.dfui-return.dfui-return-out {
+  opacity: 0;
+  transition: opacity 4000ms ease-in;
+}
+
+@media (max-width: 480px) {
+  .dfui-return {
+    font-size: 17pt;
+  }
+}
+
+/* ─── Title screen chrome (titleui-* — ported from spike TitleChrome.css) ─ */
+
+.titleui-root {
+  --titleui-bg-deep: #05070D;
+  --titleui-bg-grad: #0A0E1A;
+  --titleui-fg: #FFFFFF;
+  --titleui-fg-secondary: #8A8A96;
+  --titleui-fg-faint: #4A4D5A;
+  --titleui-accent: #D9B56B;
+  --titleui-focus: #6EC0D9;
+
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  z-index: 10;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── Title — Cormorant Garamond, inside-out letter stagger ─────────── */
+
+.titleui-title {
+  position: absolute;
+  left: 50%;
+  top: 28%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: 0;
+  font-family: var(--df-serif);
+  font-weight: 300;
+  font-size: clamp(56px, 9vw, 96px);
+  line-height: 1.0;
+  letter-spacing: 0.08em;
+  color: var(--titleui-fg);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.titleui-title-letter {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(6px);
+  transition:
+    opacity 1200ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    filter 1200ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.titleui-title.titleui-visible .titleui-title-letter {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* ─── CTA cluster — Begin / Return ──────────────────────────────────── */
+
+.titleui-cta-cluster {
+  position: absolute;
+  left: 50%;
+  top: 62%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 800ms ease-out;
+  pointer-events: auto;
+  z-index: 3;
+}
+
+.titleui-cta-cluster.titleui-visible {
+  opacity: 1;
+}
+
+.titleui-cta {
+  font-family: var(--df-serif);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.0;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: #C8C8D0;
+  background: rgba(10, 14, 26, 0.32);
+  backdrop-filter: blur(24px) brightness(0.55);
+  -webkit-backdrop-filter: blur(24px) brightness(0.55);
+  border: 1px solid rgba(200, 200, 208, 0.30);
+  border-radius: 999px;
+  padding: 16px 48px;
+  min-height: 52px;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: inset 0 0 0 rgba(217, 181, 107, 0);
+  transition:
+    border-color 280ms ease-out,
+    color 280ms ease-out,
+    background 280ms ease-out,
+    box-shadow 280ms ease-out,
+    opacity 280ms ease-out,
+    transform 80ms ease-in;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.titleui-cta:hover {
+  border-color: var(--titleui-accent);
+  color: var(--titleui-fg);
+  box-shadow: inset 0 0 24px rgba(217, 181, 107, 0.15);
+}
+
+.titleui-cta:active {
+  transform: scale(0.98);
+  border-color: var(--titleui-fg);
+}
+
+.titleui-cta:focus-visible {
+  outline: 2px solid var(--titleui-focus);
+  outline-offset: 4px;
+}
+
+@keyframes titleui-cta-breathe {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 1.0; }
+}
+
+.titleui-cta-cluster.titleui-breathing .titleui-cta {
+  animation: titleui-cta-breathe 3800ms cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.titleui-cta-cluster.titleui-breathing .titleui-cta:hover,
+.titleui-cta-cluster.titleui-breathing .titleui-cta:focus-visible {
+  animation-play-state: paused;
+  opacity: 1;
+}
+
+/* ─── Title settings gear — top-right, non-functional placeholder ───── */
+
+.titleui-settings {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity 800ms ease-out;
+  z-index: 3;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.titleui-settings.titleui-visible {
+  opacity: 1;
+}
+
+.titleui-settings svg {
+  width: 16px;
+  height: 16px;
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 1.25;
+  fill: none;
+  transition: stroke 180ms ease;
+}
+
+.titleui-settings:hover svg {
+  stroke: rgba(255, 255, 255, 0.70);
+}
+
+.titleui-settings:focus-visible {
+  outline: 2px solid var(--titleui-focus);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+/* ─── Cosmological fact slot ────────────────────────────────────────── */
+
+.titleui-fact-slot {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.titleui-fact {
+  font-family: var(--df-sans);
+  font-weight: 350;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: #8A8A96;
+  font-variant-numeric: tabular-nums;
+  opacity: 0;
+  transition: opacity 850ms ease-in-out;
+  white-space: nowrap;
+}
+
+.titleui-fact.titleui-fact-visible {
+  opacity: 1;
+}
+
+.titleui-fact.titleui-fact-fading {
+  opacity: 0;
+}
+
+/* ─── Modal — Return / save-code restore + Settings stub ────────────── */
+
+.titleui-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 7, 13, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+  animation: titleui-backdrop-in 280ms ease-out;
+}
+
+@keyframes titleui-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.titleui-modal {
+  width: 420px;
+  max-width: 88vw;
+  background: #0A0E1A;
+  border: 1px solid #20263A;
+  border-radius: 4px;
+  padding: 32px 28px;
+  pointer-events: auto;
+  animation: titleui-modal-in 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes titleui-modal-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1.0); }
+}
+
+.titleui-modal-heading {
+  margin: 0 0 16px;
+  font-family: var(--df-serif);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: var(--titleui-fg);
+}
+
+.titleui-modal-body {
+  margin: 0 0 6px;
+  font-family: var(--df-sans);
+  font-weight: 350;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--titleui-fg-secondary);
+}
+
+.titleui-modal-textarea {
+  width: 100%;
+  background: #05070D;
+  border: 1px solid #20263A;
+  border-radius: 3px;
+  padding: 10px 12px;
+  color: #E8E6DF;
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+  font-size: 14px;
+  line-height: 1.4;
+  resize: vertical;
+  min-height: 88px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 180ms ease;
+}
+
+.titleui-modal-textarea:focus-visible {
+  border-color: var(--titleui-focus);
+}
+
+.titleui-modal-stub {
+  margin-top: 10px;
+  font-family: var(--df-sans);
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--titleui-fg-secondary);
+  font-style: italic;
+  animation: titleui-stub-in 200ms ease-out;
+}
+
+@keyframes titleui-stub-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.titleui-modal-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.titleui-modal-cancel,
+.titleui-modal-restore {
+  font-family: var(--df-serif);
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--titleui-fg-secondary);
+  background: transparent;
+  border: 1px solid var(--titleui-fg-faint);
+  border-radius: 999px;
+  padding: 10px 22px;
+  cursor: pointer;
+  transition:
+    border-color 220ms ease-out,
+    color 220ms ease-out,
+    box-shadow 220ms ease-out,
+    opacity 220ms ease-out,
+    transform 80ms ease-in;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.titleui-modal-cancel:hover {
+  border-color: rgba(255, 255, 255, 0.55);
+  color: var(--titleui-fg);
+}
+
+.titleui-modal-restore:hover:not(:disabled) {
+  border-color: var(--titleui-accent);
+  color: var(--titleui-fg);
+  box-shadow: inset 0 0 24px rgba(217, 181, 107, 0.15);
+}
+
+.titleui-modal-restore:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.titleui-modal-cancel:active,
+.titleui-modal-restore:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.titleui-modal-cancel:focus-visible,
+.titleui-modal-restore:focus-visible {
+  outline: 2px solid var(--titleui-focus);
+  outline-offset: 4px;
+}
+
+/* Chrome elements fade together when the title is leaving. */
+.titleui-root.titleui-fading-out .titleui-title,
+.titleui-root.titleui-fading-out .titleui-cta-cluster,
+.titleui-root.titleui-fading-out .titleui-settings,
+.titleui-root.titleui-fading-out .titleui-fact-slot {
+  opacity: 0;
+  transition: opacity 1000ms ease-in;
+}
+
+@media (max-width: 1023px) and (min-width: 481px) {
+  .titleui-settings {
+    top: 20px;
+    right: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .titleui-fact-slot {
+    left: auto;
+    right: 14px;
+    bottom: 14px;
+    transform: none;
+  }
+  .titleui-fact {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .titleui-title {
+    top: 32%;
+    font-size: 48px;
+  }
+  .titleui-cta-cluster {
+    top: 68%;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .titleui-cta {
+    padding: 20px 56px;
+    min-height: 52px;
+    font-size: 17px;
+  }
+  .titleui-settings {
+    top: 16px;
+    right: 16px;
+  }
+  .titleui-fact-slot {
+    right: 12px;
+    bottom: 12px;
+  }
+  .titleui-modal {
+    padding: 24px 20px;
+  }
+}
+
+/* ─── Reduced motion ────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .dfui-bottom.dfui-breathing .dfui-upgrade-hairline,
+  .dfui-first-cue-point {
+    animation: none;
+  }
+  .dfui-consolidate {
+    animation: none;
+    opacity: 1;
+  }
+  .titleui-title-letter {
+    transition: opacity 600ms linear, filter 600ms linear;
+    filter: none;
+  }
+  .titleui-title.titleui-visible .titleui-title-letter {
+    filter: none;
+  }
+  .titleui-cta-cluster,
+  .titleui-settings {
+    transition: opacity 600ms linear;
+  }
+  .titleui-cta-cluster.titleui-breathing .titleui-cta {
+    animation: none;
+    opacity: 0.85;
+  }
+  .titleui-modal-backdrop,
+  .titleui-modal {
+    animation: none;
+  }
+  .titleui-fact {
+    transition: opacity 200ms linear;
+  }
+}

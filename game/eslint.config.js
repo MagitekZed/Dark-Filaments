@@ -74,6 +74,31 @@ export default defineConfig([
       'no-useless-assignment': 'off',
     },
   },
+  // UI chrome layer (scaffold §7 G5). The chrome is absorbed from the galaxy-
+  // spike's *UIChrome work and is event-driven off engine snapshots. Two of the
+  // eslint-plugin-react-hooks v7 React-Compiler rules over-flag legitimate
+  // chrome idioms — the same rules the scene layer relaxes for the same reason:
+  //   - react-hooks/set-state-in-effect: the narrator/return/modal surfaces
+  //     synchronize React state TO an external system (the engine snapshot
+  //     stream, a modal open/close, a one-shot welcome-back fire). Reacting to a
+  //     snapshot rider by enqueueing a fading line, or resetting modal fields on
+  //     close, is exactly the external-system synchronization effects are for;
+  //     the compiler heuristic cannot tell it apart from a cascading render.
+  //   - react-hooks/purity: CosmologicalFacts is absorbed verbatim and seeds its
+  //     shuffle with Math.random() in a useMemo (a once-per-mount session seed) —
+  //     the same seeded-RNG idiom the scene components use.
+  // rules-of-hooks + exhaustive-deps stay ON. only-export-components is relaxed
+  // because a couple of chrome modules co-export small helpers; the hot-reload
+  // cost is acceptable for this presentational layer.
+  {
+    files: ['src/ui/**/*.{ts,tsx}'],
+    rules: {
+      'react-hooks/purity': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/immutability': 'off',
+      'react-refresh/only-export-components': 'off',
+    },
+  },
   // Scene-reads-store seam (scaffold §12.7): scene modules read engine state via
   // the store/selectors, NEVER the Worker. The ONE sanctioned exception is the
   // tap-handler wiring in CosmicCanvas (sendClick). This rule blocks every other

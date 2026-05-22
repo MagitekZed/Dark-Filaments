@@ -1,0 +1,18 @@
+/* ui/fonts.css — font-family tokens for the chrome (scaffold §3 ui tree).
+ *
+ * The two faces (Cormorant Garamond + Inter) are LOADED by the <link> in
+ * game/index.html (Google Fonts, with display=swap). This file declares the
+ * reusable family stacks as CSS custom properties so chrome.css and the chrome
+ * components reference one source of truth rather than repeating the long stack
+ * strings inline.
+ *
+ *   --df-serif  — Cormorant Garamond. Narrator register + mass/causal readouts.
+ *   --df-sans   — Inter. Clinical labels, stats line, click verb.
+ *
+ * Tokens are scoped to :root so every chrome surface inherits them.
+ */
+
+:root {
+  --df-serif: 'Cormorant Garamond', 'Cormorant', Georgia, serif;
+  --df-sans: 'Inter', system-ui, sans-serif;
+}
