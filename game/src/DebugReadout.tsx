@@ -12,7 +12,6 @@
 // it is a developer instrument, exempt under the dev-tooling carve-out, and is
 // removed when GameChrome lands.
 
-import { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 import { useStore } from './store';
 import {
@@ -20,9 +19,8 @@ import {
   selectAffordable, selectCausalConnections, selectPaused,
 } from './store/selectors';
 import {
-  startEngine, sendInit, sendClick, sendBuy, sendTierUp, sendPause,
+  sendClick, sendBuy, sendTierUp, sendPause,
 } from './workers/engineClient';
-import { DEFAULT_PARAMS } from './engine';
 
 function fmt(n: number): string {
   if (!Number.isFinite(n)) return '—';
@@ -49,11 +47,9 @@ export default function DebugReadout() {
   const transition = useStore((s) => s.lastTransition);
   const offlineReturn = useStore((s) => s.snapshot?.offlineReturn ?? null);
 
-  // Boot the engine on mount: spawn the worker + INIT a fresh universe.
-  useEffect(() => {
-    startEngine();
-    sendInit({ type: 'INIT', state: null, params: DEFAULT_PARAMS, offlineSec: 0 });
-  }, []);
+  // The engine is booted once by persistence.boot() at app mount (App.tsx) — the
+  // G3 persistence boot path replaces the old hardcoded fresh-INIT here. This
+  // component is now a pure display surface; it never INITs the worker.
 
   const ownedLevels = Object.entries(levels).filter(([, n]) => (n as number) > 0);
 
