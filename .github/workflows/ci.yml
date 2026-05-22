@@ -1,0 +1,49 @@
+# Dark Filaments game CI (scaffold plan §9 / §7 G7).
+#
+# Placed at the repository root `.github/workflows/` — where GitHub Actions
+# discovers workflows. `game/` is a subdirectory of the monorepo, so paths are
+# repo-root-relative (`game/**`, `cache-dependency-path: game/package-lock.json`,
+# `working-directory: game`). actions/checkout checks out the WHOLE repo (no
+# sparse filter) — required, because the parity test
+# (game/src/test/engine/parity.test.ts) loads the prototype JS engine via a
+# relative path four levels up: game/src/test/engine -> repo root -> Prototype/
+# src/sim. Limiting the checkout to game/ would break parity. Do not add
+# sparse-checkout.
+
+name: game-ci
+
+on:
+  push:
+    paths: ['game/**', '.github/workflows/ci.yml']
+  pull_request:
+    paths: ['game/**', '.github/workflows/ci.yml']
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: game
+    steps:
+      - uses: actions/checkout@v4
+        # Default = full repo checkout. The parity test needs Prototype/ present.
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: game/package-lock.json
+
+      - run: npm ci
+
+      - run: npx tsc -b --noEmit            # typecheck (project references)
+
+      - run: npx vitest run                 # engine harnesses + parity (565)
+
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm run build                  # vite build (tsc -b + vite build)
+
+      - run: npx playwright test            # boot smoke vs the built artifact (vite preview)
+
+      - run: node scripts/bundle-budget.mjs # fail if main chunk exceeds the gzipped budget
