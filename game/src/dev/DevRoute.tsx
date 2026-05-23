@@ -69,6 +69,7 @@ export function DevRoute() {
   const clearParamPatch = useStore((s) => s.clearParamPatch);
   const setCameraReadout = useStore((s) => s.setCameraReadout);
   const setLiveSpeed = useStore((s) => s.setLiveSpeed);
+  const setAppView = useStore((s) => s.setAppView);
   const [confirmReset, setConfirmReset] = useState(false);
 
   // panelOpen defaults true (dev-gated). Backtick toggles. Ignored when typing
@@ -97,6 +98,9 @@ export function DevRoute() {
 
   function doRestart() {
     devResetUniverse();
+    // Back to the home screen so the full flow (title → Begin → game) can be
+    // re-run fresh, exactly as a brand-new player would see it.
+    setAppView('title');
     // Reset the store-side dev state so the readouts reflect the fresh universe.
     markUniverseStart();
     clearParamPatch();
@@ -171,7 +175,7 @@ export function DevRoute() {
               <button style={btn} onClick={() => setConfirmReset(false)}>cancel</button>
             </>
           ) : (
-            <button style={btn} onClick={() => setConfirmReset(true)} title="fresh T1 universe + clear save">
+            <button style={btn} onClick={() => setConfirmReset(true)} title="fresh T1 universe + clear save → home screen">
               Restart
             </button>
           )}
