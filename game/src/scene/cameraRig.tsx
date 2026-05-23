@@ -117,6 +117,40 @@ export function CameraDrift({
   return null;
 }
 
+// ─── Static curated camera ───────────────────────────────────────────────
+//
+// A fixed curated camera that HOLDS an exact composed framing (no drift), for
+// tiers whose sceneParams define a cameraTarget — the "captured default view"
+// workflow (compose in dev free-look, paste position/target/fov into
+// sceneParams). Snaps the camera to the framing on mount and whenever it
+// re-activates (e.g. after dev free-orbit is turned off, which leaves the camera
+// wherever the orbit ended). Disabled while free-orbit is on so they don't
+// fight for the camera. Nothing else moves the camera on a static tier, so a
+// one-shot set holds in steady state.
+interface StaticCameraProps {
+  active: boolean;
+  position: [number, number, number];
+  target: [number, number, number];
+  fov: number;
+}
+
+export function StaticCamera({ active, position, target, fov }: StaticCameraProps) {
+  const { camera } = useThree();
+  const [px, py, pz] = position;
+  const [tx, ty, tz] = target;
+  useEffect(() => {
+    if (!active) return;
+    const persp = camera as PerspectiveCamera;
+    camera.position.set(px, py, pz);
+    if (persp.isPerspectiveCamera && persp.fov !== fov) {
+      persp.fov = fov;
+      persp.updateProjectionMatrix();
+    }
+    camera.lookAt(tx, ty, tz);
+  }, [active, camera, px, py, pz, tx, ty, tz, fov]);
+  return null;
+}
+
 // ─── Camera reset watcher ───────────────────────────────────────────────
 //
 // Calls OrbitControls.reset() when `version` changes (the spike's cross-Canvas

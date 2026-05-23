@@ -25,7 +25,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Bloom } from './components/Bloom';
-import { CameraDrift, DevOrbitControls } from './cameraRig';
+import { CameraDrift, StaticCamera, DevOrbitControls } from './cameraRig';
 import { sceneForTier } from './tiers/registry';
 import { cinematicForTransition } from './transitions/transitionRegistry';
 import { sceneParamsForTier } from './sceneParams';
@@ -131,9 +131,20 @@ export function CosmicCanvas() {
               threshold={params.bloom.threshold}
             />
             {/* Curated camera by default; dev free-orbit when toggled (§6.4).
-                CameraDrift is disabled while free-orbit is on so they don't
+                A tier with a captured static framing (sceneParams.cameraTarget)
+                holds that exact view; otherwise the slow azimuthal CameraDrift
+                runs. Both are disabled while free-orbit is on so they don't
                 fight for the camera each frame. */}
-            <CameraDrift active={!freeOrbit} />
+            {params.cameraTarget ? (
+              <StaticCamera
+                active={!freeOrbit}
+                position={params.cameraPosition}
+                target={params.cameraTarget}
+                fov={params.cameraFov}
+              />
+            ) : (
+              <CameraDrift active={!freeOrbit} />
+            )}
             <DevOrbitControls />
           </>
         )}

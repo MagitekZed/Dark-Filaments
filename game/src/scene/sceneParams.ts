@@ -24,6 +24,14 @@ export interface TierSceneParams {
   cameraPosition: [number, number, number];
   /** Initial camera field of view (degrees). */
   cameraFov: number;
+  /**
+   * Optional look-at point. When present, the tier uses a STATIC curated camera
+   * (no drift) holding exactly cameraPosition → cameraTarget at cameraFov — the
+   * "captured default view" workflow: compose a framing in dev free-look, read
+   * off the position/target/fov, and paste them here. Tiers WITHOUT a
+   * cameraTarget keep the slow azimuthal CameraDrift.
+   */
+  cameraTarget?: [number, number, number];
   /** Bloom rig parameters for this tier (the spike tuned these per scene). */
   bloom: { strength: number; radius: number; threshold: number };
 }
@@ -55,8 +63,12 @@ export const BLACK_HOLE_AXIS_TILT: [number, number, number] = [Math.PI / 2.3, 0.
 // registry mounts a quiet default scene for them — see tiers/registry.ts).
 export const TIER_SCENE_PARAMS: Record<number, TierSceneParams> = {
   1: {
-    cameraPosition: [0, 4.5, 28.0],
+    // Captured default view (2026-05-23) — composed in dev free-look and set as
+    // the T1 title/home framing. Static (cameraTarget present): holds this exact
+    // composition rather than drifting.
+    cameraPosition: [7.9, 2.56, -25.63],
     cameraFov: 38,
+    cameraTarget: [0, 0, 0],
     bloom: { strength: 0.75, radius: 0.65, threshold: 0.4 },
   },
   2: {
@@ -71,8 +83,14 @@ export const TIER_SCENE_PARAMS: Record<number, TierSceneParams> = {
   },
 };
 
-// Default framing for tiers whose scene is not yet authored.
-export const DEFAULT_SCENE_PARAMS: TierSceneParams = TIER_SCENE_PARAMS[1];
+// Default framing for tiers whose scene is not yet authored. Standalone (NOT an
+// alias of T1) and intentionally WITHOUT a cameraTarget, so unauthored tiers
+// keep the slow CameraDrift rather than inheriting T1's static composition.
+export const DEFAULT_SCENE_PARAMS: TierSceneParams = {
+  cameraPosition: [0, 4.5, 28.0],
+  cameraFov: 38,
+  bloom: { strength: 0.75, radius: 0.65, threshold: 0.4 },
+};
 
 export function sceneParamsForTier(tier: number): TierSceneParams {
   return TIER_SCENE_PARAMS[tier] ?? DEFAULT_SCENE_PARAMS;
