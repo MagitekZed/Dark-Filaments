@@ -32,6 +32,23 @@ export interface TierSceneParams {
    * cameraTarget keep the slow azimuthal CameraDrift.
    */
   cameraTarget?: [number, number, number];
+  /**
+   * Optional inclined-orbit framing. When present, the tier uses CameraDrift
+   * with this framing (a slow azimuthal orbit anchored at baseDistance/fov,
+   * looking at the origin, with an optional verticalAmp bob above/below the
+   * plane). Takes precedence over cameraTarget. Tiers with neither use the
+   * generic viewport-aware CameraDrift. Mirrors cameraRig's DriftFraming plus an
+   * initial azimuth so the orbit starts at a chosen composition.
+   */
+  cameraDrift?: {
+    fov: number;
+    baseDistance: number;
+    height: number;
+    lookAtY: number;
+    verticalAmp?: number;
+    radPerSec?: number;
+    initialAzimuth?: number;
+  };
   /** Bloom rig parameters for this tier (the spike tuned these per scene). */
   bloom: { strength: number; radius: number; threshold: number };
 }
@@ -63,12 +80,26 @@ export const BLACK_HOLE_AXIS_TILT: [number, number, number] = [Math.PI / 2.3, 0.
 // registry mounts a quiet default scene for them — see tiers/registry.ts).
 export const TIER_SCENE_PARAMS: Record<number, TierSceneParams> = {
   1: {
-    // Captured default view (2026-05-23) — composed in dev free-look and set as
-    // the T1 title/home framing. Static (cameraTarget present): holds this exact
-    // composition rather than drifting.
+    // Captured framing (2026-05-23, composed in dev free-look) used as the ANCHOR
+    // for a slow INCLINED orbit — not a static hold. The orbit sits at the
+    // captured radius (~26.8) and fov (38) looking at the origin, starting at the
+    // captured azimuth, and rides above/below the planetary plane (verticalAmp)
+    // for varied angles. cameraPosition is just the initial seed before
+    // CameraDrift takes over.
     cameraPosition: [7.9, 2.56, -25.63],
-    cameraFov: 38,
-    cameraTarget: [0, 0, 0],
+    cameraFov: 40,
+    cameraDrift: {
+      // Pulled back ~8% on distance (26.8 → 29.0) and widened fov ~5% (38 → 40)
+      // from the original capture, so the sun reads smaller and its bloom no
+      // longer overpowers the frame.
+      fov: 40,
+      baseDistance: 29.0,
+      height: 2.0,
+      lookAtY: 0,
+      verticalAmp: 4.4,
+      radPerSec: 0.0011,
+      initialAzimuth: 2.85,
+    },
     bloom: { strength: 0.75, radius: 0.65, threshold: 0.4 },
   },
   2: {

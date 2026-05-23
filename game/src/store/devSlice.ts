@@ -61,12 +61,11 @@ export interface DevSlice {
 }
 
 export const createDevSlice: StateCreator<DevSlice, [], [], DevSlice> = (set) => ({
-  // Open by default — DevRoute (the only consumer) is import.meta.env.DEV-gated,
-  // so this matters only in dev mode, where having the tools visible on first
-  // load (without hunting for the backtick toggle) is the right default. The
-  // backtick key toggles it; in production DevRoute never mounts so this is
-  // inert store shape.
-  panelOpen: true,
+  // Collapsed by default so the scene loads unobstructed — DevRoute shows a small
+  // "dev" chip in the corner; click it or press the backtick key to expand. (Only
+  // meaningful in dev mode; DevRoute is import.meta.env.DEV-gated, so in prod this
+  // is inert store shape.)
+  panelOpen: false,
   showInspector: false,
   freeOrbit: false,
   forcedTier: null,

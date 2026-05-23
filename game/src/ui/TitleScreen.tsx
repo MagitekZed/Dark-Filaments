@@ -90,7 +90,9 @@ export function TitleScreen({ onBegin }: TitleScreenProps) {
               className="titleui-title-letter"
               style={{ transitionDelay: titleVisible ? `${delayMs}ms` : '0ms' }}
             >
-              {ch === ' ' ? ' ' : ch}
+              {/* non-breaking space: a whitespace-only inline-block letter span
+                collapses to zero width, so a normal space would vanish. */}
+            {ch === ' ' ? ' ' : ch}
             </span>
           );
         })}

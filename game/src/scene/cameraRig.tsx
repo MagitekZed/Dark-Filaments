@@ -50,6 +50,16 @@ export interface DriftFraming {
   baseDistance: number;
   height: number;
   lookAtY: number;
+  /**
+   * Optional vertical bob coupled to the orbit azimuth: the camera's y becomes
+   * `height + verticalAmp * sin(azimuth)`, so the orbit is inclined off the
+   * planetary plane and the viewpoint rises above and dips below as it goes
+   * around (one above + one below per full orbit) — varied angles instead of a
+   * flat ring. Undefined / 0 = the original flat orbit (the generic title drift).
+   */
+  verticalAmp?: number;
+  /** Per-framing orbit speed (rad/s); falls back to DRIFT_RAD_PER_SEC. */
+  radPerSec?: number;
 }
 
 // Viewport-aware framing (lifted from MainScene.pickTitleFraming): pull back to
@@ -106,11 +116,15 @@ export function CameraDrift({
       rateScale = Math.max(0, 1 - elapsed / DRIFT_DECAY_MS);
     }
     if (rateScale > 0) {
-      azimuthRef.current += DRIFT_RAD_PER_SEC * delta * 60 * rateScale;
+      const rate = framing.radPerSec ?? DRIFT_RAD_PER_SEC;
+      azimuthRef.current += rate * delta * 60 * rateScale;
     }
     const a = azimuthRef.current;
     const r = framing.baseDistance;
-    camera.position.set(Math.sin(a) * r, framing.height, Math.cos(a) * r);
+    // Inclined orbit: bob above/below the planetary plane as the azimuth advances
+    // (verticalAmp 0/undefined → flat ring, the original behavior).
+    const y = framing.height + (framing.verticalAmp ?? 0) * Math.sin(a);
+    camera.position.set(Math.sin(a) * r, y, Math.cos(a) * r);
     camera.lookAt(0, framing.lookAtY, 0);
   });
 

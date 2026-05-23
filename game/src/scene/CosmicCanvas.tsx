@@ -12,9 +12,17 @@
 //   - hosts the tap surface: a pointer-up on the canvas wrapper fires the
 //     click-feedback pull burst AND the engine CLICK.
 //
-// Decision 8 / §12.4: gl={{ logarithmicDepthBuffer: true }} for extreme-scale
-// depth precision. The spike did NOT set this; enabling it can interact with
-// the hand-rolled UnrealBloomPass composer — bloom is re-verified after.
+// Depth buffer (revises Decision 8 / §12.4, 2026-05-23): logarithmicDepthBuffer
+// is OFF. It had been enabled for forward-looking extreme-scale precision, but
+// the absorbed scenes use custom ShaderMaterials (Star/Planet) that don't
+// implement log-depth, while built-in materials (e.g. the prominence points) do
+// — two incompatible depth encodings in one buffer, which broke depth tests
+// (prominences drew over a transiting planet). The scenes are stylized and
+// bounded per tier (the extreme span is handled across tiers via transitions,
+// not in one frame), so standard depth is correct-by-default and needs no
+// per-shader cooperation. Re-introduce log-depth scoped to a scene only if one
+// ever genuinely needs single-frame extreme precision — and make its shaders
+// log-depth-aware then.
 //
 // §12.7 — the scene reads the STORE, never the Worker. THE ONE EXCEPTION is the
 // tap-handler wiring here: CosmicCanvas is the single sanctioned point that
@@ -112,8 +120,9 @@ export function CosmicCanvas() {
       <Canvas
         camera={{ position: params.cameraPosition, fov: params.cameraFov }}
         dpr={[1, 2]}
-        // §12.4: log-depth buffer for extreme-scale depth precision (Decision 8).
-        gl={{ antialias: true, logarithmicDepthBuffer: true }}
+        // logarithmicDepthBuffer intentionally OFF (see header note) — standard
+        // depth is consistent across built-in + custom-shader materials.
+        gl={{ antialias: true }}
       >
         <color attach="background" args={['#000']} />
 
@@ -131,11 +140,17 @@ export function CosmicCanvas() {
               threshold={params.bloom.threshold}
             />
             {/* Curated camera by default; dev free-orbit when toggled (§6.4).
-                A tier with a captured static framing (sceneParams.cameraTarget)
-                holds that exact view; otherwise the slow azimuthal CameraDrift
-                runs. Both are disabled while free-orbit is on so they don't
-                fight for the camera each frame. */}
-            {params.cameraTarget ? (
+                Per-tier camera mode: a captured inclined orbit (cameraDrift) >
+                a static hold (cameraTarget) > the generic viewport-aware drift.
+                All are disabled while free-orbit is on so they don't fight for
+                the camera each frame. */}
+            {params.cameraDrift ? (
+              <CameraDrift
+                active={!freeOrbit}
+                framing={params.cameraDrift}
+                initialAzimuth={params.cameraDrift.initialAzimuth}
+              />
+            ) : params.cameraTarget ? (
               <StaticCamera
                 active={!freeOrbit}
                 position={params.cameraPosition}
