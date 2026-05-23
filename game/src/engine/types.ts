@@ -91,6 +91,14 @@ export interface Params {
   // worker-runtime additions (not persisted):
   autoCpm?: number;
   autoclickerOn?: boolean;
+  // Live auto-buy ("self-play"): when on, the worker runs strategy.decideAction
+  // on the LIVE tick and applies buys/transitions — the same strategy the
+  // offline/fast-forward auto-buy uses, but watchable in real time / at Live
+  // speed. mode gates completionist purchases; saveVpc is the strategy's save
+  // threshold. Pair with the autoclicker for click income.
+  autoBuyOn?: boolean;
+  autoBuyMode?: 'completion' | 'threshold';
+  autoBuySaveVpc?: number;
 }
 
 export interface TierMeta {
@@ -116,6 +124,13 @@ export interface EngineSnapshot {
   recentTierUp: { fromTier: number; toTier: number } | null;
   causalConnections: number; // static placeholder in Act 1
   paused: boolean;
+  // Total simulated in-game seconds (1 tick = 1 s; advanced by live ticks AND
+  // by the offline/time-skip accrual). The sim second the current tier began
+  // (from the active tierSnapshot). Both feed dev elapsed-time tracking and are
+  // harmless data in prod — 1 sim second is 1 in-game calendar second, so these
+  // compare directly against the per-tier calendar targets.
+  tickCount: number;
+  tierStartSec: number;
   // Welcome-back, set once after a boot offline-accrual window:
   offlineReturn: { elapsedSec: number; massGained: number } | null;
 }

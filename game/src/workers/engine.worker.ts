@@ -33,6 +33,7 @@ import {
   freshEngineState,
   activeUpgradesFor,
   applyTick,
+  applyAutoStep,
   applyClick,
   applyBuy,
   applyTierUp,
@@ -121,6 +122,18 @@ function coreLoop(): void {
   let applied = 0;
   while (now >= rt.nextTickAt && applied < MAX_CATCHUP_TICKS) {
     applyTick(rt.state, rt.activeUpgrades, rt.params);
+    // Live auto-buy ("self-play"): one strategy decision per applied tick. At 1×
+    // that is one decision/second; combined with Live speed it plays itself fast.
+    // A transition refreshes the active slice and fires the scene cinematic.
+    if (rt.params.autoBuyOn) {
+      const step = applyAutoStep(rt.state, rt.activeUpgrades, rt.params);
+      if (step.transitioned && step.fromTier != null && step.toTier != null) {
+        rt.activeUpgrades = activeUpgradesFor(rt.state.currentTier);
+        rt.recentTierUp = { fromTier: step.fromTier, toTier: step.toTier };
+        post({ type: 'TRANSITION', fromTier: step.fromTier, toTier: step.toTier });
+        postSnapshot();
+      }
+    }
     rt.nextTickAt += rt.coreIntervalMs;
     applied += 1;
   }

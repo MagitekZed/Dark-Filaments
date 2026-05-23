@@ -134,11 +134,50 @@ export function CameraResetWatcher({
   return null;
 }
 
+// ─── Free-look camera reporter (dev capture) ──────────────────────────────
+//
+// While free-look is active, sample the live camera (position, the OrbitControls
+// orbit target, fov, distance) ~5 Hz and write it to devSlice.cameraReadout so
+// the dev panel can show — and copy — the exact framing. This is how the dev
+// finds the best static view for a tier and hands back the numbers to set as the
+// default. Cleared to null on unmount (free-look turned off). Dev-only: only ever
+// mounted under DevOrbitControls, which is gated on freeOrbit (dev flips it).
+function CameraReporter({
+  controlsRef,
+}: {
+  controlsRef: React.RefObject<OrbitControlsImpl | null>;
+}) {
+  const { camera } = useThree();
+  const setCameraReadout = useStore((s) => s.setCameraReadout);
+  const accRef = useRef(0);
+
+  useFrame((_state, delta) => {
+    accRef.current += delta;
+    if (accRef.current < 0.2) return;
+    accRef.current = 0;
+    const persp = camera as PerspectiveCamera;
+    const t = controlsRef.current?.target;
+    const tx = t ? t.x : 0, ty = t ? t.y : 0, tz = t ? t.z : 0;
+    const px = camera.position.x, py = camera.position.y, pz = camera.position.z;
+    const dist = Math.hypot(px - tx, py - ty, pz - tz);
+    const r = (n: number) => Math.round(n * 100) / 100;
+    setCameraReadout({
+      position: [r(px), r(py), r(pz)],
+      target: [r(tx), r(ty), r(tz)],
+      fov: persp.isPerspectiveCamera ? r(persp.fov) : 0,
+      distance: r(dist),
+    });
+  });
+
+  useEffect(() => () => setCameraReadout(null), [setCameraReadout]);
+  return null;
+}
+
 // ─── Dev free-orbit controls ────────────────────────────────────────────
 //
 // drei <OrbitControls> mounted ONLY when devSlice.freeOrbit is true (§6.4).
 // Shipped gameplay never mounts this — the curated camera is the experience.
-// The dev SceneSwitcher (G6) and the future Inventory artifact flip freeOrbit.
+// The dev camera tools (G6) and the future Inventory artifact flip freeOrbit.
 //
 // resetVersion drives the reset watcher (snap camera back to default view).
 export function DevOrbitControls({ resetVersion = 0 }: { resetVersion?: number }) {
@@ -149,6 +188,7 @@ export function DevOrbitControls({ resetVersion = 0 }: { resetVersion?: number }
     <>
       <OrbitControls ref={controlsRef} enableDamping dampingFactor={0.08} enablePan />
       <CameraResetWatcher version={resetVersion} controlsRef={controlsRef} />
+      <CameraReporter controlsRef={controlsRef} />
     </>
   );
 }

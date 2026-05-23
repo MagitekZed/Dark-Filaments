@@ -15,9 +15,9 @@
 //   baseMpc            — floor click value in M☉ (the most load-bearing tuning
 //                        lever from the M☉ retune).
 //   consolidationGrowth— per-tier threshold growth factor.
-//   autoclickerOn/autoCpm — worker-runtime autoclicker (off in shipped play):
-//                        drives click income at autoCpm without a real tap, so
-//                        the dev can watch the click economy accrue hands-free.
+//
+// The autoclicker (autoclickerOn / autoCpm) used to live here; it is now the
+// dedicated first-class Auto-click control in the Game-flow section.
 //
 // Dev-only: tree-shaken from prod via DevRoute's import.meta.env.DEV gate.
 
@@ -39,7 +39,6 @@ const KNOBS: Knob[] = [
   { key: 'engagement', label: 'engagement', step: 0.05 },
   { key: 'baseMpc', label: 'baseMpc', step: 0.0005 },
   { key: 'consolidationGrowth', label: 'consolidationGrowth', step: 0.1 },
-  { key: 'autoCpm', label: 'autoCpm', step: 10 },
 ];
 
 export function ParamOverrides() {
@@ -61,19 +60,10 @@ export function ParamOverrides() {
     return d;
   });
 
-  const autoclickerOn = !!(paramPatch.autoclickerOn);
-
   function applyOne(key: keyof Params) {
     const value = draft[key as string];
     if (!Number.isFinite(value)) return;
     const patch = { [key]: value } as Partial<Params>;
-    devSetParams(patch);
-    recordParamPatch(patch);
-  }
-
-  function toggleAutoclicker() {
-    const next = !autoclickerOn;
-    const patch: Partial<Params> = { autoclickerOn: next };
     devSetParams(patch);
     recordParamPatch(patch);
   }
@@ -100,13 +90,6 @@ export function ParamOverrides() {
         </div>
       ))}
 
-      <div style={row}>
-        <span style={{ ...label, minWidth: 130, display: 'inline-block' }}>autoclicker</span>
-        <button style={btn} onClick={toggleAutoclicker}>
-          {autoclickerOn ? 'on — turn off' : 'off — turn on'}
-        </button>
-      </div>
-
       {Object.keys(paramPatch).length > 0 && (
         <>
           <p style={{ ...note, color: '#7a8aa0' }}>
@@ -118,8 +101,7 @@ export function ParamOverrides() {
         </>
       )}
       <p style={note}>
-        Patches merge over the engine's live params (reload / re-INIT reverts).
-        autoCpm only feeds income while the autoclicker is on.
+        Patches merge over the engine's live params (reload / Restart reverts).
       </p>
     </div>
   );

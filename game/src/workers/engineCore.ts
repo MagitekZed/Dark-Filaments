@@ -16,6 +16,7 @@
 
 import * as core from '../engine/core';
 import * as runner from '../engine/runner';
+import * as strategy from '../engine/strategy';
 import { reconstructFromOfflineWindow } from '../engine/offline';
 import { UPGRADES, DEFAULT_PARAMS } from '../engine/data';
 import { CAUSAL_CONNECTIONS_PLACEHOLDER } from './protocol';
@@ -328,6 +329,59 @@ export function applySkipToTier(s: EngineState, targetTier: number): boolean {
   return true;
 }
 
+export interface AutoStepResult {
+  transitioned: boolean;
+  fromTier?: number;
+  toTier?: number;
+}
+
+// applyAutoStep — PURE one strategy decision applied to the LIVE state (dev
+// "self-play"). Runs strategy.decideAction (the SAME strategy the offline /
+// fast-forward auto-buy uses) and applies the chosen action via the same pure
+// helpers a player path uses (applyBuy / applyTierUp), so live auto-buy is
+// byte-consistent with manual play — realistic, just hands-free. One decision
+// per call (the worker calls it once per applied tick); 'save'/'none' are no-ops.
+// Click income is NOT added here — it comes from applyTick's autoclicker channel
+// (pair auto-buy with the autoclicker for income). Mutates s.
+export function applyAutoStep(
+  s: EngineState,
+  activeUpgrades: Upgrade[],
+  params: Params,
+): AutoStepResult {
+  const mode = params.autoBuyMode === 'threshold' ? 'threshold' : 'completion';
+  const saveVpcThreshold = typeof params.autoBuySaveVpc === 'number' ? params.autoBuySaveVpc : 1.5;
+  // The strategy values click upgrades against an assumed click rate; feed it the
+  // live autoclicker rate so its view of click income matches what applyTick adds.
+  const cpm = params.autoclickerOn && params.autoCpm ? params.autoCpm : 0;
+  const stratParams = {
+    cpm,
+    engagement: params.engagement,
+    saveVpcThreshold,
+    consolidationThreshold: s.consolidationThreshold,
+    baseMpc: params.baseMpc,
+    baseMps: 0.0,
+    carry: { allMps: s.carry.allMps, allMpc: s.carry.allMpc, allAps: s.carry.allAps },
+    carryMps: s.carry.carryMps,
+    carryMpc: s.carry.carryMpc,
+    carryAps: s.carry.carryAps,
+    synergyProviders: UPGRADES,
+    mode,
+    longSaveTimeThresholdSec: 90,
+    longSaveTolerance: 1.05,
+    perTierEngagement: params.perTierEngagement,
+  };
+  const action = strategy.decideAction(s, stratParams, activeUpgrades);
+  if (action.action === 'transition') {
+    const out = applyTierUp(s);
+    if (out.ok) return { transitioned: true, fromTier: out.fromTier, toTier: out.toTier };
+    return { transitioned: false };
+  }
+  if (action.action === 'buy') {
+    applyBuy(s, activeUpgrades, action.upgrade);
+  }
+  return { transitioned: false };
+}
+
 // deriveSnapshot — PURE EngineState → EngineSnapshot projection (§4.2).
 export function deriveSnapshot(
   s: EngineState,
@@ -346,6 +400,11 @@ export function deriveSnapshot(
     const c = core.cost(u, level);
     if (c != null && s.mass >= c) affordable.push(u.name);
   }
+  // The current tier's start (sim seconds). tierSnapshots is index-aligned to
+  // tier number (index = tier - 1); startMs is in sim-milliseconds (typed via the
+  // element's index signature, so read defensively). Fallback 0 if absent.
+  const startMsRaw = s.tierSnapshots[s.currentTier - 1]?.startMs;
+  const tierStartSec = typeof startMsRaw === 'number' ? startMsRaw / 1000 : 0;
   return {
     seq,
     mass: s.mass,
@@ -362,6 +421,8 @@ export function deriveSnapshot(
     recentTierUp,
     causalConnections: CAUSAL_CONNECTIONS_PLACEHOLDER,
     paused,
+    tickCount: s.tickCount,
+    tierStartSec,
     offlineReturn,
   };
 }

@@ -232,6 +232,26 @@ function reInitAfterHidden(hiddenSec: number): void {
   sendRequestSave();
 }
 
+// resetUniverse — DEV-only fresh-start. Clears the save and re-INITs the live
+// worker with a fresh T1 universe (state:null) at default params, the same INIT
+// path boot uses — so the reset goes through the real engine, no rule-breaking
+// shortcut. The worker's INIT swaps rt.state for a fresh one, restarts timers,
+// and posts an immediate snapshot, so the store/scene reflect T1 at once. The
+// next autosave persists the fresh state (clearLocalSave is belt-and-suspenders
+// against a stale blob being restored if the tab is closed before that).
+// Leaves the lifecycle listeners + autosave bound (boot already ran).
+export function resetUniverse(): void {
+  clearLocalSave();
+  lastSeenTier = 1;
+  activeParams = Object.assign({}, DEFAULT_PARAMS);
+  sendInit({
+    type: 'INIT',
+    state: null,
+    params: activeParams,
+    offlineSec: 0,
+  });
+}
+
 // shutdown — tears down the interval + resets the boot guard. Used by tests and
 // any future teardown; not called in the normal app lifecycle.
 export function shutdown(): void {

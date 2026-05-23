@@ -66,6 +66,12 @@ export const selectOfflineReturn = (s: GameStore) => s.snapshot?.offlineReturn ?
 
 export const selectPaused = (s: GameStore): boolean => s.snapshot?.paused ?? false;
 
+// Total simulated in-game seconds (1 tick = 1 s). Primitive — safe bare.
+export const selectSimSeconds = (s: GameStore): number => s.snapshot?.tickCount ?? 0;
+
+// Sim second the current tier began (for the per-tier elapsed timer). Primitive.
+export const selectTierStartSec = (s: GameStore): number => s.snapshot?.tierStartSec ?? 0;
+
 // Dev: the SceneSwitcher force-mount tier. null → CosmicCanvas falls back to the
 // live engine tier (selectTier). Non-null → CosmicCanvas mounts that tier's
 // scene for authoring/inspection without progressing the game. The dev slice is

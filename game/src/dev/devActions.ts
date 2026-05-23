@@ -24,7 +24,10 @@ import {
   sendTimeSkip,
   sendSetParams,
   sendPause,
+  sendSetTickHz,
 } from '../workers/engineClient';
+import { DEFAULT_CORE_HZ, DEFAULT_SNAPSHOT_HZ } from '../workers/protocol';
+import { resetUniverse } from '../store/persistence';
 import { BUYER_PROFILES, type BuyerProfile } from '../engine/profiles';
 import type { Params } from '../engine';
 // ProfileParams is in engine/types but not in the public barrel (the barrel is
@@ -84,6 +87,47 @@ export function devTimeSkipAutoBuy(
 // ── ParamOverrides ──────────────────────────────────────────────────────
 export function devSetParams(patch: Partial<Params>): void {
   sendSetParams(patch);
+}
+
+// ── Restart (fresh universe) ──────────────────────────────────────────────
+//
+// Re-INIT the live worker with a fresh T1 universe (state:null) and clear the
+// save — the SAME INIT path boot uses, so the reset is realistic, not a cheat.
+// Store-side resets (the dev session clock, param-patch display, camera readout,
+// live-speed) are done by the caller (the React Restart control).
+export function devResetUniverse(): void {
+  resetUniverse();
+}
+
+// ── Live speed (watch a tier unfold, accelerated) ─────────────────────────
+//
+// Multiplies the core tick rate via SET_TICK_HZ. multiplier 1 = real-time 1 Hz;
+// 10 = ten in-game seconds per real second, etc. Honors the rules — the engine
+// ticks the SAME applyTick, just more often; income/consolidation accrue exactly
+// as in real play. Snapshot cadence stays at the default (UI updates ~4 Hz while
+// sim races). NOTE: tabbing away resets cadence to 1× via the visibilitychange
+// handler — re-select a speed on return.
+export function devSetSpeed(multiplier: number): void {
+  const m = Number.isFinite(multiplier) && multiplier > 0 ? multiplier : 1;
+  sendSetTickHz(DEFAULT_CORE_HZ * m, DEFAULT_SNAPSHOT_HZ);
+}
+
+// ── Auto-click (simulate a player tapping, hands-free) ────────────────────
+//
+// Drives the worker-runtime autoclicker (off in shipped play) at `cpm` clicks/
+// minute through the SAME mpc channel a real tap uses — realistic, just
+// hands-free. on=false stops it.
+export function devSetAutoClick(on: boolean, cpm: number): void {
+  sendSetParams({ autoclickerOn: on, autoCpm: cpm });
+}
+
+// ── Auto-buy / self-play (live) ───────────────────────────────────────────
+//
+// Runs the buyer strategy on the LIVE tick so the game plays itself in real time
+// (or at Live speed). Same strategy the fast-forward auto-buy uses — purchases
+// and tier transitions fire as in a real climb. Pair with Auto-click for income.
+export function devSetAutoBuy(on: boolean, mode: 'completion' | 'threshold'): void {
+  sendSetParams({ autoBuyOn: on, autoBuyMode: mode });
 }
 
 // ── Pause (shared affordance, exposed for the dev panel) ──────────────────

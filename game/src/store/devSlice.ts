@@ -20,6 +20,17 @@
 import type { StateCreator } from 'zustand';
 import type { Params } from '../engine';
 
+// Live camera orientation captured in free-look mode (written by the in-Canvas
+// CameraReporter, read by the dev panel's camera-capture readout). Lets the dev
+// orbit to a good static framing and copy the exact numbers to set as a tier's
+// default view. Cleared (null) when free-look is off.
+export interface CameraReadout {
+  position: [number, number, number];
+  target: [number, number, number];
+  fov: number;
+  distance: number;
+}
+
 export interface DevSlice {
   panelOpen: boolean;
   showInspector: boolean;
@@ -27,6 +38,14 @@ export interface DevSlice {
   forcedTier: number | null;
   timeSkipSeconds: number;
   paramPatch: Partial<Params>;
+  // Live-speed multiplier (1× = real-time 1 Hz; >1 accelerates the core tick via
+  // SET_TICK_HZ so a tier can be watched unfolding). Tracked for button highlight.
+  liveSpeed: number;
+  // Real wall-clock ms at which the current universe began (this dev session, or
+  // last Restart). Real elapsed = Date.now() - universeStartMs.
+  universeStartMs: number;
+  // Free-look camera capture (see CameraReadout). null when not in free-look.
+  cameraReadout: CameraReadout | null;
 
   setPanelOpen(v: boolean): void;
   togglePanel(): void;
@@ -36,6 +55,9 @@ export interface DevSlice {
   setTimeSkipSeconds(s: number): void;
   recordParamPatch(patch: Partial<Params>): void;
   clearParamPatch(): void;
+  setLiveSpeed(n: number): void;
+  markUniverseStart(): void;
+  setCameraReadout(r: CameraReadout | null): void;
 }
 
 export const createDevSlice: StateCreator<DevSlice, [], [], DevSlice> = (set) => ({
@@ -50,6 +72,11 @@ export const createDevSlice: StateCreator<DevSlice, [], [], DevSlice> = (set) =>
   forcedTier: null,
   timeSkipSeconds: 3600,
   paramPatch: {},
+  liveSpeed: 1,
+  // Seeded at store-creation time (≈ app load). Restart re-stamps it so real
+  // elapsed reads "time in this universe", not "since the tab opened".
+  universeStartMs: Date.now(),
+  cameraReadout: null,
 
   setPanelOpen(v) {
     set({ panelOpen: v });
@@ -74,5 +101,14 @@ export const createDevSlice: StateCreator<DevSlice, [], [], DevSlice> = (set) =>
   },
   clearParamPatch() {
     set({ paramPatch: {} });
+  },
+  setLiveSpeed(n) {
+    set({ liveSpeed: n });
+  },
+  markUniverseStart() {
+    set({ universeStartMs: Date.now() });
+  },
+  setCameraReadout(r) {
+    set({ cameraReadout: r });
   },
 });
