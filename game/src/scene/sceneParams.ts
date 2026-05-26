@@ -107,6 +107,25 @@ export const TIER_SCENE_PARAMS: Record<number, TierSceneParams> = {
     cameraFov: 55,
     bloom: { strength: 0.55, radius: 0.65, threshold: 0.42 },
   },
+  3: {
+    // Dwarf Spheroidal — the first patient-universe-return tier. A very slow
+    // inclined orbit (the cloud reads "framed a little differently each return"
+    // — on-theme for a calm calendar return). Old, dim population: a gentle
+    // bloom with a high-ish threshold so only the red-giant beacons glow and the
+    // diffuse bulk stays a quiet swarm rather than blowing out.
+    cameraPosition: [0, 9, 54],
+    cameraFov: 46,
+    cameraDrift: {
+      fov: 46,
+      baseDistance: 54.0,
+      height: 7.0,
+      lookAtY: 0,
+      verticalAmp: 6.0,
+      radPerSec: 0.0009,
+      initialAzimuth: 0.6,
+    },
+    bloom: { strength: 0.5, radius: 0.7, threshold: 0.46 },
+  },
   5: {
     cameraPosition: [3.0, 2.2, 4.8],
     cameraFov: 55,

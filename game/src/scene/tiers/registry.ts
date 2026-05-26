@@ -12,6 +12,7 @@
 import type { ComponentType } from 'react';
 import { T1SolarSystem } from './T1SolarSystem';
 import { T2StellarNeighborhood } from './T2StellarNeighborhood';
+import { T3DwarfSpheroidal } from './T3DwarfSpheroidal';
 import { T5Galaxy } from './T5Galaxy';
 import { DefaultTierScene } from './DefaultTierScene';
 
@@ -23,8 +24,9 @@ export type TierScene = ComponentType;
 export const TIER_SCENES: Record<number, TierScene> = {
   1: T1SolarSystem,
   2: T2StellarNeighborhood,
+  3: T3DwarfSpheroidal,
   5: T5Galaxy,
-  // 3, 4, 6–11 attach here as authored.
+  // 4, 6–11 attach here as authored.
 };
 
 export function sceneForTier(tier: number): TierScene {
