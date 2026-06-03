@@ -30,6 +30,15 @@ interface FieldStarSystemProps {
    *  pushes the temperature toward hot blue, and triples the size +
    *  density of the prominence/wind plumes. */
   wolfRayetActive?: boolean
+  /**
+   * Reveal scale, 0..1 (default 1). Scales the whole system around its OWN
+   * anchor position (local), so a transition can fade a star into view by
+   * having it resolve in place — NOT grow outward from the world origin.
+   * (The T1→T2 cinematic uses this to reveal the neighborhood as the camera
+   * pulls back, instead of the old origin-anchored group scale that made the
+   * stars appear to erupt from the central sun.)
+   */
+  revealScale?: number
 }
 
 // Wraps a Star + its planets in a group whose position oscillates around
@@ -84,6 +93,7 @@ export function FieldStarSystem({
   planets = [],
   kinematicsLevel = 0,
   wolfRayetActive = false,
+  revealScale = 1,
 }: FieldStarSystemProps) {
   // Wolf-Rayet modifiers — applied to the star + prominences. The
   // star itself is bumped substantially larger, pushed all the way
@@ -146,6 +156,10 @@ export function FieldStarSystem({
         position[1] + dy,
         position[2] + dz,
       )
+      // Reveal scale — applied to THIS group (anchored at `position`), so the
+      // system resolves in place rather than erupting from the world origin.
+      // Default 1 → no-op for steady-state tier scenes.
+      groupRef.current.scale.setScalar(revealScale)
     }
     // WR three-phase activation. Star renders at WR-target values (radius,
     // temperature, brightness) from the moment of activation, but each

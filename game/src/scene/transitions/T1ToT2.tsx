@@ -40,13 +40,18 @@ import { PLAYER_PLANETS, FIELD_STARS } from '../tiers/T2StellarNeighborhood';
 import {
   TRANSITION_DURATION,
   TRANSITION_HARD_TIMEOUT_MS,
-  T1_CAMERA, T2_CAMERA,
   T1_SUN_POSITION, T1_SUN_RADIUS,
   T2_SUN_POSITION, T2_SUN_RADIUS,
   WINDOWS, MOUNT_THRESHOLDS,
   linear, easeIn, easeOut, cubicInOut,
   subWindow, lerp, lerpVec3,
 } from './transitionTimeline';
+// The camera path is computed against the LIVE rigs on both ends (no stale
+// anchors): it captures the actual T1 drift pose on frame 1 and eases to the
+// EXACT pose T2's CameraDrift will hold on its first frame, so both hand-offs
+// are seamless. pickDriftFraming + DEFAULT_DRIFT_AZIMUTH are the same source the
+// live T2 drift uses, so the exit pose can't drift out of sync.
+import { pickDriftFraming, DEFAULT_DRIFT_AZIMUTH } from '../cameraRig';
 
 const KUIPER_COLORS = [
   '#b8c8d8', '#c8d4e0', '#a8b4c4',
@@ -94,42 +99,82 @@ export function T1ToT2({ onComplete }: T1ToT2Props) {
 }
 
 function T1ToT2Content({ fireComplete }: { fireComplete: () => void }) {
-  const { camera, clock } = useThree();
+  const { camera, clock, size } = useThree();
   const [progress, setProgress] = useState(0);
   const startTimeRef = useRef<number | null>(null);
   const completedLocalRef = useRef(false);
+
+  // Camera path endpoints, captured/computed once on the first frame so the
+  // pull-out continues from the LIVE T1 pose and lands on the LIVE T2 pose.
+  // Cylindrical (azimuth/radius/height) so the camera arcs out rather than
+  // dollying in a straight line, and so it can keep drifting in the orbit's
+  // sense as it pulls back (no frozen-then-restart feel).
+  const startPoseRef = useRef<{ az: number; r: number; y: number; fov: number } | null>(null);
+  const endPoseRef = useRef<{ az: number; r: number; y: number; fov: number; lookAtY: number } | null>(null);
 
   const sunGroupRef = useRef<THREE.Group>(null);
   const innerPlanetsRef = useRef<THREE.Group>(null);
   const outerPlanetsRef = useRef<THREE.Group>(null);
   const miniPlanetsGroupRef = useRef<THREE.Group>(null);
-  const fssCloseRef = useRef<THREE.Group>(null);
-  const fssMidRef = useRef<THREE.Group>(null);
-  const fssFarRef = useRef<THREE.Group>(null);
   const closeNebulaMatRef = useRef<THREE.PointsMaterial>(null);
 
   const innerPlanets = useMemo(() => PLANETS.slice(0, 3), []);
   const outerPlanets = useMemo(() => PLANETS.slice(3, 6), []);
 
   useFrame(() => {
-    if (startTimeRef.current === null) startTimeRef.current = clock.elapsedTime;
+    const perspCam = camera as THREE.PerspectiveCamera;
+
+    // First frame: capture the live start pose (wherever the T1 drift orbit is
+    // right now) and compute the exact end pose the live T2 drift will hold on
+    // its first frame — so neither hand-off snaps.
+    if (startTimeRef.current === null) {
+      startTimeRef.current = clock.elapsedTime;
+
+      const x = camera.position.x, y = camera.position.y, z = camera.position.z;
+      const az0 = Math.atan2(x, z);
+      const r0 = Math.hypot(x, z);
+      const fov0 = perspCam.isPerspectiveCamera ? perspCam.fov : 45;
+      startPoseRef.current = { az: az0, r: r0, y, fov: fov0 };
+
+      // T2's live camera is CameraDrift with the viewport-aware framing and the
+      // shared default azimuth. Replicate its frame-1 pose EXACTLY so the
+      // hand-off is seamless on any aspect ratio.
+      const aspect = size.width / Math.max(1, size.height);
+      const framing = pickDriftFraming(aspect);
+      // Land on the drift's azimuth, taking the SHORT signed rotation from the
+      // captured azimuth (≤ half a turn) so the camera keeps arcing in roughly
+      // the orbit's sense rather than spinning the long way around.
+      let dAz = ((DEFAULT_DRIFT_AZIMUTH - az0) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+      if (dAz > Math.PI) dAz -= 2 * Math.PI;
+      const endAz = az0 + dAz;
+      endPoseRef.current = {
+        az: endAz,
+        r: framing.baseDistance,
+        y: framing.height + (framing.verticalAmp ?? 0) * Math.sin(endAz),
+        fov: framing.fov,
+        lookAtY: framing.lookAtY,
+      };
+    }
+
     const elapsed = clock.elapsedTime - startTimeRef.current;
     const p = Math.min(1, elapsed / TRANSITION_DURATION);
 
-    // 1. Camera position
-    const camT = cubicInOut(subWindow(p, WINDOWS.cameraPosition[0], WINDOWS.cameraPosition[1]));
-    const camPos = lerpVec3(T1_CAMERA.position, T2_CAMERA.position, camT);
-    camera.position.set(camPos[0], camPos[1], camPos[2]);
+    const sp = startPoseRef.current!;
+    const ep = endPoseRef.current!;
 
-    // 2. Camera FOV — back half only
-    if (p >= WINDOWS.cameraFov[0]) {
-      const fovT = linear(subWindow(p, WINDOWS.cameraFov[0], WINDOWS.cameraFov[1]));
-      const fov = lerp(T1_CAMERA.fov, T2_CAMERA.fov, fovT);
-      const perspCam = camera as THREE.PerspectiveCamera;
-      if (Math.abs(perspCam.fov - fov) > 0.001) {
-        perspCam.fov = fov;
-        perspCam.updateProjectionMatrix();
-      }
+    // 1 + 2. Camera — one eased pull over the whole duration, in cylindrical
+    // coords (arcing pull-back), ending exactly on the live T2 drift pose.
+    const camT = cubicInOut(p);
+    const az = lerp(sp.az, ep.az, camT);
+    const r = lerp(sp.r, ep.r, camT);
+    const y = lerp(sp.y, ep.y, camT);
+    camera.position.set(Math.sin(az) * r, y, Math.cos(az) * r);
+    camera.lookAt(0, lerp(0, ep.lookAtY, camT), 0);
+
+    const fov = lerp(sp.fov, ep.fov, camT);
+    if (perspCam.isPerspectiveCamera && Math.abs(perspCam.fov - fov) > 0.001) {
+      perspCam.fov = fov;
+      perspCam.updateProjectionMatrix();
     }
 
     // 3. Sun group — position + scale
@@ -157,19 +202,10 @@ function T1ToT2Content({ fireComplete }: { fireComplete: () => void }) {
       miniPlanetsGroupRef.current.scale.setScalar(t);
     }
 
-    // 6. FieldStarSystem batches — scale-in once mounted
-    if (fssCloseRef.current) {
-      const t = cubicInOut(subWindow(p, WINDOWS.fieldStarsClose[0], WINDOWS.fieldStarsClose[1]));
-      fssCloseRef.current.scale.setScalar(t);
-    }
-    if (fssMidRef.current) {
-      const t = cubicInOut(subWindow(p, WINDOWS.fieldStarsMid[0], WINDOWS.fieldStarsMid[1]));
-      fssMidRef.current.scale.setScalar(t);
-    }
-    if (fssFarRef.current) {
-      const t = cubicInOut(subWindow(p, WINDOWS.fieldStarsFar[0], WINDOWS.fieldStarsFar[1]));
-      fssFarRef.current.scale.setScalar(t);
-    }
+    // 6. FieldStarSystem batches reveal IN PLACE via per-star revealScale (a
+    //    render-side prop computed from progress below) — no origin-anchored
+    //    group scale, so the neighborhood resolves where it sits as the camera
+    //    pulls back, instead of erupting from the central sun.
 
     // 7. Close T1 nebula — live material opacity
     if (closeNebulaMatRef.current) {
@@ -202,6 +238,13 @@ function T1ToT2Content({ fireComplete }: { fireComplete: () => void }) {
   const sunShrinkT = cubicInOut(subWindow(progress, WINDOWS.sunMove[0], WINDOWS.sunMove[1]));
   const largeArcSize = lerp(0.075, 0.0231, sunShrinkT);
   const tightArcSize = lerp(0.020, 0.0110, sunShrinkT);
+
+  // Field-star reveal scalars (0→1) — each batch resolves in place over its own
+  // staggered window as the camera pulls back. Passed to FieldStarSystem as
+  // revealScale, which scales each system around its OWN anchor (not the origin).
+  const fieldCloseReveal = cubicInOut(subWindow(progress, WINDOWS.fieldStarsClose[0], WINDOWS.fieldStarsClose[1]));
+  const fieldMidReveal = cubicInOut(subWindow(progress, WINDOWS.fieldStarsMid[0], WINDOWS.fieldStarsMid[1]));
+  const fieldFarReveal = cubicInOut(subWindow(progress, WINDOWS.fieldStarsFar[0], WINDOWS.fieldStarsFar[1]));
 
   return (
     <>
@@ -324,27 +367,18 @@ function T1ToT2Content({ fireComplete }: { fireComplete: () => void }) {
         />
       )}
 
-      {progress > MOUNT_THRESHOLDS.fieldStarsClose && (
-        <group ref={fssCloseRef} scale={0}>
-          {FIELD_STARS_CLOSE.map((s, i) => (
-            <FieldStarSystem key={`close-${i}`} position={s.position} radius={s.radius} temperature={s.temperature} seed={i + 1} planets={s.planets} />
-          ))}
-        </group>
-      )}
-      {progress > MOUNT_THRESHOLDS.fieldStarsMid && (
-        <group ref={fssMidRef} scale={0}>
-          {FIELD_STARS_MID.map((s, i) => (
-            <FieldStarSystem key={`mid-${i}`} position={s.position} radius={s.radius} temperature={s.temperature} seed={i + 4 + 1} planets={s.planets} />
-          ))}
-        </group>
-      )}
-      {progress > MOUNT_THRESHOLDS.fieldStarsFar && (
-        <group ref={fssFarRef} scale={0}>
-          {FIELD_STARS_FAR.map((s, i) => (
-            <FieldStarSystem key={`far-${i}`} position={s.position} radius={s.radius} temperature={s.temperature} seed={i + 8 + 1} planets={s.planets} />
-          ))}
-        </group>
-      )}
+      {progress > MOUNT_THRESHOLDS.fieldStarsClose &&
+        FIELD_STARS_CLOSE.map((s, i) => (
+          <FieldStarSystem key={`close-${i}`} position={s.position} radius={s.radius} temperature={s.temperature} seed={i + 1} planets={s.planets} revealScale={fieldCloseReveal} />
+        ))}
+      {progress > MOUNT_THRESHOLDS.fieldStarsMid &&
+        FIELD_STARS_MID.map((s, i) => (
+          <FieldStarSystem key={`mid-${i}`} position={s.position} radius={s.radius} temperature={s.temperature} seed={i + 4 + 1} planets={s.planets} revealScale={fieldMidReveal} />
+        ))}
+      {progress > MOUNT_THRESHOLDS.fieldStarsFar &&
+        FIELD_STARS_FAR.map((s, i) => (
+          <FieldStarSystem key={`far-${i}`} position={s.position} radius={s.radius} temperature={s.temperature} seed={i + 8 + 1} planets={s.planets} revealScale={fieldFarReveal} />
+        ))}
 
       <Bloom strength={bloomStrength} radius={0.65} threshold={bloomThreshold} />
     </>

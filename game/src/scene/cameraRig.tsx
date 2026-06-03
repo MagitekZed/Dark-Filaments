@@ -45,6 +45,13 @@ export function useOrbitControlsRef() {
 const DRIFT_RAD_PER_SEC = 0.0008;
 const DRIFT_DECAY_MS = 1400;
 
+// Default starting azimuth for the curated drift. Shared so a transition
+// cinematic can compute the EXACT pose the live drift will hold on its first
+// frame and end there — a seamless hand-off, no snap. (T1→T2 reads this to
+// match its exit pose to T2's CameraDrift frame 1.) If a tier overrides
+// initialAzimuth, that tier's transition must match it the same way.
+export const DEFAULT_DRIFT_AZIMUTH = 0.7;
+
 export interface DriftFraming {
   fov: number;
   baseDistance: number;
@@ -85,7 +92,7 @@ export function CameraDrift({
   active,
   decayStartMs = null,
   framing: framingOverride,
-  initialAzimuth = 0.7,
+  initialAzimuth = DEFAULT_DRIFT_AZIMUTH,
 }: CameraDriftProps) {
   const { camera, size } = useThree();
   const azimuthRef = useRef(initialAzimuth);
