@@ -78,7 +78,9 @@
   -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.6);
   paint-order: stroke fill;
   letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums;
+  /* lining figures so the serif counter reads "0.11" as data, not oldstyle
+     "o.ii". (Same fix as the upgrade-card cost/level figures.) */
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 /* ─── Top-left: Stats line (global readout — NOT an upgrade card) ───── */
@@ -185,7 +187,9 @@
   color: rgba(255, 255, 255, 0.90);
   -webkit-text-stroke: 0.4px rgba(0, 0, 0, 0.5);
   paint-order: stroke fill;
-  font-variant-numeric: tabular-nums;
+  /* lining figures: the 13-digit hidden number must read as a legible number
+     (the design wants the player to wonder about it), not oldstyle jangle. */
+  font-variant-numeric: lining-nums tabular-nums;
   letter-spacing: 0.02em;
 }
 
