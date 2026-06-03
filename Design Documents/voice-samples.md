@@ -4,11 +4,12 @@
 
 The narrator never identifies themselves. They are durable enough to have watched from before the first stars and to be present at the last. They are not a god. They grieve. They speak in first-person plural — *we* — until the very end.
 
-**Version 0.5 · Last updated 2026-05-14**
+**Version 0.6 · Last updated 2026-06-02**
 
 ## Changelog
 
-- **0.5 (current)** — **2026-05-14 UX workstream closing pass.** New §Clinical register section added near the end of the doc as a TO-WRITE placeholder under the **Two-voice UI** load-bearing rule (CLAUDE.md); the section is the canonical reference for clinical-voice samples once written. New §Writing Backlog section added near the end of the doc, enumerating tracked writing TO-WRITE items in approximate dependency order (clinical card descriptions T1-T3 first, T4+ tier-by-tier; T3 Dwarf Spheroidal scene description for visual-design.md §3; T5-T11 tier-up flavor lines; named-connection break lines for T4+ named one-shots; CMB through-line ~15-20 lines; welcome-back narrator lines; endgame "I" passage lock; clinical card descriptions T5-T11). **No existing narrator-voice content modified.**
+- **0.6 (current)** — **2026-06-02 — Clinical register LOCKED for T1-T3 (25 lines) + calibration note locked.** The §Clinical register section is converted from TO-WRITE placeholder to LOCKED: it now carries the writer-agent-calibrated clinical-register note and all 25 verbatim T1-T3 clinical card one-liners (drafted + calibrated this session; wired into the `game/` scaffold at `game/src/ui/clinicalDescriptions.ts` — the persistent CLINICAL register of the Two-voice UI rule, distinct from the narrator's fading "we" prose which relocates to the first-purchase fade-in). §Writing Backlog: the "Clinical card descriptions for T1-T3" item is marked DONE; T4+ clinical lines remain TO-WRITE. **No narrator-voice content modified** (the clinical register is the OTHER voice and does not cross into the narrator's).
+- **0.5** — **2026-05-14 UX workstream closing pass.** New §Clinical register section added near the end of the doc as a TO-WRITE placeholder under the **Two-voice UI** load-bearing rule (CLAUDE.md); the section is the canonical reference for clinical-voice samples once written. New §Writing Backlog section added near the end of the doc, enumerating tracked writing TO-WRITE items in approximate dependency order (clinical card descriptions T1-T3 first, T4+ tier-by-tier; T3 Dwarf Spheroidal scene description for visual-design.md §3; T5-T11 tier-up flavor lines; named-connection break lines for T4+ named one-shots; CMB through-line ~15-20 lines; welcome-back narrator lines; endgame "I" passage lock; clinical card descriptions T5-T11). **No existing narrator-voice content modified.**
 - **0.4** — **2026-05-13 evening post-audit — T2 Stellar Neighborhood tier-up refreshed.** Writer-audit pass landed the one outstanding T1-T3 voice fix: *"Twelve solar masses, gathered"* → *"A thousand solar masses, gathered"* — Pleiades-class T2 end mass is ~10³ M☉, the original literal undersold the named scale by two orders of magnitude under the CD-1 M☉ unit lock. Three-sentence rhythm preserved; the "X solar masses, gathered" pattern parallels T4's "Ten billion suns" and T5's "Two hundred billion stars" across the tier-up spine. "A thousand" over "One thousand" keeps the soft vowel-opening and conversational register. Load-bearing third sentence "We are no longer just one sun" preserved verbatim. The REVISIT bracket from v0.2 is now resolved and removed.
 - **0.3 (previous)** — **2026-05-13 evening — T3 Dwarf Spheroidal tier-up line LOCKED.** User selected Candidate 1 of three from the writer pass — "embedding" register. *We are inside something we cannot see. The stars we can count are the small part. The rest holds.* Three short sentences; verb-agency clean (physics-as-actor in sentences 2-3); stays clear of Draco Dwarf's "name" beat (the locked one-shot inside the tier carries that). Honors SD-2 (*dark matter is inferred, not rendered*) — the line gestures at gravitational embedding, not at luminosity. Bridge T2 → T4 works: T2 *"no longer just one sun"* (recognition of being-among) → T3 (recognition of being-embedded-in-something-invisible) → T4 *"part of a larger turning"* (recognition of being-part-of-a-structure). First patient-universe-return tier — sentence terseness lets the line land on a calendar return without overwhelming. Replaces the afternoon's TO-WRITE stub.
 - **0.3 (afternoon)** — **2026-05-13 afternoon — T2/T3 reshape.** Morning pass had inserted T2 Stellar Association; user flagged Association/Neighborhood as semantically duplicative. After CD + SD re-vetting, the new T2 is **Stellar Neighborhood** (name moved down from old-T3, keeping the existing tier-up line verbatim — only the calendar target became 2-8h) and the new T3 is **Dwarf Spheroidal** (~10⁶·⁵ M☉; Draco / Ursa Minor anchor; dark-matter-dominated; TO-WRITE stub with SD's hierarchical-merger physics hook seed). T4-T11 unchanged from the morning renumber. Long-burn voice considerations + cosmological time-arc note both updated to reflect dSph at T3 and the dark-matter-inferred-not-rendered framing that the new T3 line will honor.
@@ -194,17 +195,54 @@ Write in this order. Voice consistency is much easier when the most important li
 
 ---
 
-## Clinical register *(TO-WRITE)*
+## Clinical register *(LOCKED for T1-T3 — 2026-06-02)*
 
 Under the **Two-voice UI** load-bearing rule (CLAUDE.md), persistent UI prose lives in a **clinical register** — real-cosmology terminology, no first or second person, no editorializing, no agency. The narrator's "we" does not appear here. The two registers (fading narrator prose vs persistent clinical prose) do not cross.
 
-This section is the canonical reference for clinical-voice samples. **Sample suite TO-WRITE** as part of the writing backlog (see §Writing Backlog below).
+This section is the canonical reference for clinical-voice samples. **T1-T3 (25 lines) are locked below**; T4+ batches follow tier calibration cadence (see §Writing Backlog).
 
-**Priority order:**
-- T1-T3 upgrade card descriptions (~25 lines) — clinical one-liner per upgrade for the persistent card surface; existing narrator-voice prose in gameplay-design.md §3 relocates to the first-purchase line (per visual-design.md §7 first-purchase flavor lines paragraph).
-- T4+ batches follow tier calibration cadence (T4 already retuned; T5-T11 batches land tier-by-tier as the upgrade slates are finalized).
+### Locked calibration note (writer agent, 2026-06-02)
 
-The writer agent will need a calibration update against this section once samples land. Until then, the section is a placeholder marking the register's intent; no sample lines are drafted here.
+> A persistent card line states what the named object or phenomenon IS, in present tense, as a field-guide caption would — real cosmology only, with one concrete measurement or mechanism where it adds precision rather than clutter. No first or second person, no agency (it never describes the player pulling, holding, or reaching), no editorializing or feeling, and no metaphor that isn't literal physics. The quiet beauty is carried entirely by accurate specifics — a temperature, a velocity, a mass-to-light ratio — never by sentiment.
+
+These lines are the persistent upgrade-card description (the card's clinical one-liner). They live UI-side in the `game/` scaffold at `game/src/ui/clinicalDescriptions.ts` (the engine's `desc` fields stay parity-clean — those are the OTHER register, the narrator's fading "we" prose, which relocates to the one-time first-purchase fade-in). On the card they render in sans (Inter), distinct from the serif-italic upgrade name. A missing entry renders an empty line (the card holds its layout height); never invented prose.
+
+### T1-T3 lines (verbatim, locked)
+
+**Tier 1 — Solar System**
+- **Solar Wind** — Charged particles streaming outward from the stellar corona at roughly four hundred kilometers per second.
+- **Asteroid Belt** — Rocky bodies orbiting between Mars and Jupiter, the largest a dwarf planet nine hundred kilometers across.
+- **Stellar Coupling** — Gravitational interaction binding orbiting bodies to the central mass.
+- **Magnetosphere** — The region where a body's magnetic field deflects the surrounding charged plasma.
+- **Orbital Resonance** — Bodies whose orbital periods relate as a ratio of small integers, perturbing one another in step.
+- **Heliopause** — The boundary where the solar wind's pressure meets the interstellar medium, the edge of the Sun's reach.
+- **First Photons** — The first thermonuclear light, released as a core crosses the hydrogen-fusion threshold near ten million kelvin.
+
+**Tier 2 — Stellar Neighborhood**
+- **Stellar Kinematics** — The three-dimensional motion of nearby stars: proper motion, radial velocity, and parallax distance.
+- **Local Bubble** — A cavity in the interstellar medium, hundreds of light-years across, filled with hot low-density plasma.
+- **Microlensing** — A foreground mass bending and briefly brightening the light of a star behind it.
+- **Roche Lobe Overflow** — Matter spilling from one star through the inner Lagrange point onto its close companion.
+- **Brown Dwarf** — A substellar body too light for sustained hydrogen fusion, gravitating in the infrared.
+- **Wolf-Rayet Star** — A massive evolved star whose stellar winds strip its outer hydrogen envelope into space.
+- **Binary Partner** — A companion star sharing a gravitationally bound orbit about a common center of mass.
+- **Peculiar Velocity** — A star's motion that remains after subtracting the bulk rotation of the galactic disk.
+- **Open Cluster** — A few hundred to a few thousand stars, loosely bound, born from one molecular cloud.
+- **Moving Group** — Stars dispersed across the sky that still share a common origin and space velocity.
+
+**Tier 3 — Dwarf Spheroidal**
+- **Population II** — Old, metal-poor stars formed in the early universe, before later generations enriched the gas.
+- **Subhalo** — A smaller dark-matter halo bound within a larger one, its mass inferred from gravity alone.
+- **RR Lyrae** — A pulsating horizontal-branch star, its period and brightness fixing distances across the halo.
+- **Velocity Dispersion** — The spread of stellar line-of-sight velocities, a measure of total gravitating mass.
+- **Orphan Stream** — A long, cold stellar stream a hundred and fifty kiloparsecs across, with no identified parent.
+- **Sculptor Dwarf** — A satellite galaxy eighty-six kiloparsecs out, holding two stellar populations of differing age.
+- **Draco Dwarf** — A satellite galaxy dominated by dark matter, with hundreds of solar masses bound per solar mass of starlight.
+- **Sagittarius Stream** — Stars torn from a disrupting dwarf galaxy, wrapping more than once around the Milky Way.
+
+*(Draco Dwarf note: the clinical line says "hundreds of solar masses bound per solar mass of starlight" rather than the narrator's "four hundred forty." Deliberate — the science-glossary flags 440 as a high-end/non-consensus figure (Mateo 1998 gives ~60), so the conservative fact lives on the clinical card while the poetic license stays with the narrator. The two registers stay distinct on the same object.)*
+
+T4+ clinical card descriptions remain TO-WRITE (see §Writing Backlog).
 
 ---
 
@@ -212,7 +250,7 @@ The writer agent will need a calibration update against this section once sample
 
 Tracked writing tasks. Each item lands in its appropriate target doc once authored. Priority is ordered roughly by build/calibration dependency.
 
-- **Clinical card descriptions for T1-T3 upgrades** (~25 lines; clinical register per §Clinical register above). Target docs: gameplay-design.md §3 T1-T3 tables (Card description column / split-note enumeration); the persistent card surface in the shipped game per visual-design.md §6.
+- **Clinical card descriptions for T1-T3 upgrades** (~25 lines; clinical register per §Clinical register above) — **DONE 2026-06-02.** All 25 lines locked verbatim in §Clinical register above; wired into the `game/` scaffold at `game/src/ui/clinicalDescriptions.ts` and rendering on the prose-first upgrade card. Calibration note locked.
 - **Clinical card descriptions for T4 upgrades** (~10 lines; post T4 retune close — T4 numerical slate locked 2026-05-14, card descriptions pending writer pass).
 - **T3 Dwarf Spheroidal scene description for visual-design.md §3** (real authoring gap surfaced during 2026-05-14 doc-keeper renumber verification; needs creative-director + writer pass; specifically how the inferred-dark-matter signature SD-2 manifests in a dwarf spheroidal scene given Draco/Sculptor are textbook DM-dominated cases — the player sees the bound stars and infers the mass that holds them).
 - **T5-T11 tier-up flavor lines** (one per tier; T1-T3 locked, T4 retune-locked with its line in place, T5-T11 pending tier calibration).
