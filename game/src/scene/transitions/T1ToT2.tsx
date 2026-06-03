@@ -192,8 +192,8 @@ function T1ToT2Content({ fireComplete }: { fireComplete: () => void }) {
 
     // 3. Sun group — position + scale
     const sunT = cubicInOut(subWindow(p, WINDOWS.sunMove[0], WINDOWS.sunMove[1]));
+    const sunPos = lerpVec3(T1_SUN_POSITION, T2_SUN_POSITION, sunT);
     if (sunGroupRef.current) {
-      const sunPos = lerpVec3(T1_SUN_POSITION, T2_SUN_POSITION, sunT);
       sunGroupRef.current.position.set(sunPos[0], sunPos[1], sunPos[2]);
       const sunR = lerp(T1_SUN_RADIUS, T2_SUN_RADIUS, sunT);
       sunGroupRef.current.scale.setScalar(sunR);
@@ -209,8 +209,15 @@ function T1ToT2Content({ fireComplete }: { fireComplete: () => void }) {
       outerPlanetsRef.current.scale.setScalar(Math.max(0, 1 - t));
     }
 
-    // 5. MiniPlanets — scale-in (when mounted)
+    // 5. MiniPlanets — the T2 player planets. Their group TRACKS the sun's
+    //    position but NOT its shrink-scale (it is a SIBLING of the sun group, not
+    //    a child), so they orbit at the full T2 radius the whole time — at the
+    //    hand-off they match T2 exactly, with no outward "pop" (the bug: nested
+    //    under the 0.55 sun scale, they orbited at 0.55× the T2 radius, then
+    //    jumped). The reveal scales them 0 → 1 from the sun centre, so they
+    //    emerge from behind the sun and orbit out (then sit at full radius = T2).
     if (miniPlanetsGroupRef.current) {
+      miniPlanetsGroupRef.current.position.set(sunPos[0], sunPos[1], sunPos[2]);
       const t = easeIn(subWindow(p, WINDOWS.miniPlanetsFade[0], WINDOWS.miniPlanetsFade[1]));
       miniPlanetsGroupRef.current.scale.setScalar(t);
     }
@@ -339,12 +346,19 @@ function T1ToT2Content({ fireComplete }: { fireComplete: () => void }) {
           lifetimeMax={22}
           opacity={1.0}
         />
-        {progress > WINDOWS.miniPlanetsMountAt && (
-          <group ref={miniPlanetsGroupRef} scale={0}>
-            {PLAYER_PLANETS.map((pp, i) => <MiniPlanet key={i} {...pp} />)}
-          </group>
-        )}
       </group>
+
+      {/* MiniPlanets — the T2 player planets. SIBLING of the sun group (not a
+          child): the frame loop tracks them to the sun's position but leaves
+          them OUT of its shrink-scale, so they orbit at the full T2 radius and
+          match T2 exactly at the hand-off (no outward pop). The reveal scales
+          them 0 → full from the sun centre, so they emerge from behind the sun
+          and orbit out. */}
+      {progress > WINDOWS.miniPlanetsMountAt && (
+        <group ref={miniPlanetsGroupRef} scale={0}>
+          {PLAYER_PLANETS.map((pp, i) => <MiniPlanet key={i} {...pp} />)}
+        </group>
+      )}
 
       <group ref={innerPlanetsRef}>
         {innerPlanets.map((pl, i) => <Planet key={i} {...pl} />)}
