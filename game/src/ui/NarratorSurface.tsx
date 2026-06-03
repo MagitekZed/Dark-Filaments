@@ -44,14 +44,19 @@ const FP_TOTAL_MS = FP_FADE_IN_MS + FP_HOLD_MS + FP_FADE_OUT_MS;
 const FP_QUEUE_GAP_MS = 500;
 
 // First-purchase slots — all in the top 38% so they never overlap the upgrade
-// sheet (bottom 55%). Each upgrade hashes deterministically to one slot.
-const FP_POSITIONS: Array<{ top: string; left: string; maxWidth: string }> = [
-  { top: '12%', left: '18%', maxWidth: '320px' },
-  { top: '12%', left: '82%', maxWidth: '320px' },
-  { top: '26%', left: '15%', maxWidth: '320px' },
-  { top: '26%', left: '85%', maxWidth: '320px' },
-  { top: '36%', left: '22%', maxWidth: '360px' },
-  { top: '36%', left: '78%', maxWidth: '360px' },
+// sheet. Each upgrade hashes deterministically to one slot. Slots are EDGE-PINNED
+// (a margin in from the left or right edge, text aligned to that edge) rather
+// than center-anchored: a center-anchored fixed-width box overflowed off the
+// left/right edge on narrow portrait viewports (the line read "…rged particles"
+// instead of "Charged particles"). Edge-pinning + a vw-capped max-width keeps the
+// whole line on-screen at any width while preserving the scattered placement.
+const FP_POSITIONS: Array<{ top: string; side: 'left' | 'right' }> = [
+  { top: '14%', side: 'left' },
+  { top: '14%', side: 'right' },
+  { top: '26%', side: 'left' },
+  { top: '26%', side: 'right' },
+  { top: '37%', side: 'left' },
+  { top: '37%', side: 'right' },
 ];
 
 function slotForKey(key: string): number {
@@ -190,11 +195,12 @@ export function NarratorSurface() {
         style={{
           position: 'absolute',
           top: tierUp ? '22%' : pos!.top,
-          left: tierUp ? '50%' : pos!.left,
-          transform: 'translate(-50%, -50%)',
-          maxWidth: tierUp ? '720px' : pos!.maxWidth,
+          left: tierUp ? '50%' : pos!.side === 'left' ? '6%' : undefined,
+          right: tierUp ? undefined : pos!.side === 'right' ? '6%' : undefined,
+          transform: tierUp ? 'translate(-50%, -50%)' : 'translateY(-50%)',
+          maxWidth: tierUp ? '720px' : 'min(340px, 62vw)',
           width: tierUp ? '88%' : undefined,
-          textAlign: 'center',
+          textAlign: tierUp ? 'center' : pos!.side,
           fontFamily: "'Cormorant Garamond', 'Cormorant', Georgia, serif",
           fontWeight: 400,
           fontStyle: 'italic',

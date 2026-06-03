@@ -357,7 +357,9 @@
 .dfui-first-cue {
   position: absolute;
   left: 50%;
-  top: 50%;
+  /* Below screen-center: dead-center sat inside the T1 sun's bloom, which
+     washed the cue out entirely. The lower-third reads against darker sky. */
+  top: 64%;
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
@@ -377,6 +379,8 @@
   height: 6px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.70);
+  /* dark halo so the point stays findable over a bright background */
+  box-shadow: 0 0 8px 2px rgba(0, 0, 0, 0.55);
   animation: dfui-cue-breathe 2400ms ease-in-out infinite;
 }
 
@@ -389,10 +393,12 @@
   font-family: var(--df-sans);
   font-weight: 400;
   font-size: 9pt;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.55);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   line-height: 1.0;
+  /* legible over bloom */
+  text-shadow: 0 0 6px rgba(0, 0, 0, 0.7);
 }
 
 /* ─── Upgrade sheet — rises from bottom on open ────────────────────── */
@@ -403,9 +409,12 @@
   right: 0;
   bottom: 0;
   height: 55%;
-  background: rgba(0, 0, 0, 0.40);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* Stronger scrim: a bright scene (e.g. the T1 sun's bloom) was washing the
+     middle cards through the old 0.40/blur-12 panel. The darker fill + brightness
+     knockdown keeps card text legible over any background luminance. */
+  background: rgba(2, 4, 10, 0.64);
+  backdrop-filter: blur(16px) brightness(0.5);
+  -webkit-backdrop-filter: blur(16px) brightness(0.5);
   transform: translateY(100%);
   transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
@@ -514,13 +523,17 @@
   line-height: 1.1;
 }
 
+/* Clinical register = sans (Inter), distinct from the narrator's serif-italic
+   name above and the fading narrator prose in NarratorSurface. A spare,
+   field-guide caption. */
 .dfui-card-desc {
-  font-family: var(--df-serif);
-  font-weight: 400;
-  font-size: 14pt;
-  color: rgba(255, 255, 255, 0.70);
-  line-height: 1.25;
-  min-height: 1.25em;   /* hold layout when the clinical line is empty (TO-WRITE) */
+  font-family: var(--df-sans);
+  font-weight: 350;
+  font-size: 11pt;
+  color: rgba(255, 255, 255, 0.60);
+  line-height: 1.42;
+  letter-spacing: 0.01em;
+  min-height: 1.42em;   /* hold layout if a clinical line is missing */
 }
 
 .dfui-card-row {
@@ -535,7 +548,8 @@
   font-weight: 400;
   font-size: 15pt;
   color: rgba(255, 255, 255, 0.85);
-  font-variant-numeric: tabular-nums;
+  /* lining figures so a cost reads as data ("0.01"), not oldstyle ("o.oi"). */
+  font-variant-numeric: lining-nums tabular-nums;
   transition: color 1000ms ease-out;
 }
 
@@ -555,6 +569,8 @@
   font-size: 12pt;
   color: rgba(255, 255, 255, 0.50);
   letter-spacing: 0.04em;
+  /* lining figures so "L0"/"L1" don't read as "Lo"/"Li". */
+  font-variant-numeric: lining-nums;
 }
 
 /* ─── Mobile: top-stack adjustments ───────────────────────────────── */

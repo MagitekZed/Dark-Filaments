@@ -22,10 +22,11 @@
 // CLINICAL DESCRIPTION SOURCE: the engine's `desc` fields are narrator-voice
 // prose ("we are pulling more than we used to") — that is the FADING register
 // and relocates to the first-purchase NarratorSurface line, NOT the persistent
-// card. The clinical one-liners are TO-WRITE on the writing backlog (§11
-// out-of-scope for v0.1). So the card's clinical field renders EMPTY here — we
-// do NOT invent prose and we do NOT borrow the narrator-voice line. The empty
-// line holds its layout height (CSS min-height) so cards stay uniform.
+// card. The persistent clinical one-liners live in ui/clinicalDescriptions.ts
+// (the CLINICAL register — no first/second person, no agency) and are rendered
+// here. The two registers do not cross. T1–T3 are written; an upgrade with no
+// clinical entry renders an empty line (CSS min-height holds the layout height
+// so cards stay uniform) — we never invent prose or borrow the narrator line.
 //
 // Tapping an affordable card fires sendBuy(name). A maxed/owned card is inert.
 
@@ -33,6 +34,7 @@ import type { Upgrade } from '../engine';
 import { cost } from '../engine';
 import { sendBuy } from '../workers/engineClient';
 import { fmtCost } from './format';
+import { clinicalDescFor } from './clinicalDescriptions';
 
 interface UpgradeCardProps {
   upgrade: Upgrade;
@@ -76,9 +78,11 @@ export function UpgradeCard({ upgrade, level, affordable }: UpgradeCardProps) {
       {/* 1. name */}
       <div className="dfui-card-name">{upgrade.name}</div>
 
-      {/* 2. clinical description — TO-WRITE (empty placeholder; the narrator
-          line is shown once on first purchase via NarratorSurface, not here). */}
-      <div className="dfui-card-desc" />
+      {/* 2. clinical description — the persistent CLINICAL register (Two-voice
+          UI). Distinct from the narrator's fading "we" flavor, which relocates
+          to the one-time first-purchase fade-in via NarratorSurface. A missing
+          entry renders empty (the slot holds its layout height). */}
+      <div className="dfui-card-desc">{clinicalDescFor(upgrade.name)}</div>
 
       <div className="dfui-card-row">
         {/* 3. cost (or terminal Maxed/Owned) */}
