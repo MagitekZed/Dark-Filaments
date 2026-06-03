@@ -47,11 +47,14 @@ import {
   subWindow, lerp, lerpVec3,
 } from './transitionTimeline';
 // The camera path is computed against the LIVE rigs on both ends (no stale
-// anchors): it captures the actual T1 drift pose on frame 1 and eases to the
-// EXACT pose T2's CameraDrift will hold on its first frame, so both hand-offs
-// are seamless. pickDriftFraming + DEFAULT_DRIFT_AZIMUTH are the same source the
-// live T2 drift uses, so the exit pose can't drift out of sync.
-import { pickDriftFraming, DEFAULT_DRIFT_AZIMUTH } from '../cameraRig';
+// anchors): it captures the actual T1 drift pose on frame 1, and pans
+// CONTINUOUSLY — starting at T1's drift speed and ending at T2's — while easing
+// the pull (radius/height/fov). It stashes its end azimuth via setDriftHandoff
+// so T2's CameraDrift picks up from exactly there (consumeHandoff), giving a
+// position- AND velocity-continuous hand-off: no snap, no stop-then-pan.
+import { pickDriftFraming, DRIFT_RAD_PER_SEC } from '../cameraRig';
+import { sceneParamsForTier } from '../sceneParams';
+import { setDriftHandoff } from './cameraHandoff';
 
 const KUIPER_COLORS = [
   '#b8c8d8', '#c8d4e0', '#a8b4c4',
@@ -109,7 +112,7 @@ function T1ToT2Content({ fireComplete }: { fireComplete: () => void }) {
   // Cylindrical (azimuth/radius/height) so the camera arcs out rather than
   // dollying in a straight line, and so it can keep drifting in the orbit's
   // sense as it pulls back (no frozen-then-restart feel).
-  const startPoseRef = useRef<{ az: number; r: number; y: number; fov: number } | null>(null);
+  const startPoseRef = useRef<{ az: number; r: number; y: number; fov: number; v0: number; v1: number } | null>(null);
   const endPoseRef = useRef<{ az: number; r: number; y: number; fov: number; lookAtY: number } | null>(null);
 
   const sunGroupRef = useRef<THREE.Group>(null);
@@ -134,26 +137,31 @@ function T1ToT2Content({ fireComplete }: { fireComplete: () => void }) {
       const az0 = Math.atan2(x, z);
       const r0 = Math.hypot(x, z);
       const fov0 = perspCam.isPerspectiveCamera ? perspCam.fov : 45;
-      startPoseRef.current = { az: az0, r: r0, y, fov: fov0 };
 
-      // T2's live camera is CameraDrift with the viewport-aware framing and the
-      // shared default azimuth. Replicate its frame-1 pose EXACTLY so the
-      // hand-off is seamless on any aspect ratio.
       const aspect = size.width / Math.max(1, size.height);
       const framing = pickDriftFraming(aspect);
-      // Land on the drift's azimuth, taking the SHORT signed rotation from the
-      // captured azimuth (≤ half a turn) so the camera keeps arcing in roughly
-      // the orbit's sense rather than spinning the long way around.
-      let dAz = ((DEFAULT_DRIFT_AZIMUTH - az0) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
-      if (dAz > Math.PI) dAz -= 2 * Math.PI;
-      const endAz = az0 + dAz;
+
+      // Angular speeds (rad/s) of the drifts on each end — the camera pans at
+      // T1's speed at the start and T2's at the end so it never stops. (A drift
+      // advances azimuth by radPerSec*delta*60 → steady speed radPerSec*60.)
+      const t1RadPerSec = sceneParamsForTier(1).cameraDrift?.radPerSec ?? DRIFT_RAD_PER_SEC;
+      const v0 = t1RadPerSec * 60;
+      const v1 = DRIFT_RAD_PER_SEC * 60;
+      // The pan advances continuously in the drifts' (+) sense; total sweep is
+      // the integral of a smoothstep blend v0→v1 over the duration = D*(v0+v1)/2.
+      // Wherever that lands is the end azimuth — the T2 drift is told to start
+      // there (setDriftHandoff), so position AND velocity match at the hand-off.
+      const azEnd = az0 + TRANSITION_DURATION * (v0 + v1) / 2;
+
+      startPoseRef.current = { az: az0, r: r0, y, fov: fov0, v0, v1 };
       endPoseRef.current = {
-        az: endAz,
+        az: azEnd,
         r: framing.baseDistance,
-        y: framing.height + (framing.verticalAmp ?? 0) * Math.sin(endAz),
+        y: framing.height,
         fov: framing.fov,
         lookAtY: framing.lookAtY,
       };
+      setDriftHandoff(azEnd);
     }
 
     const elapsed = clock.elapsedTime - startTimeRef.current;
@@ -162,13 +170,18 @@ function T1ToT2Content({ fireComplete }: { fireComplete: () => void }) {
     const sp = startPoseRef.current!;
     const ep = endPoseRef.current!;
 
-    // 1 + 2. Camera — one eased pull over the whole duration, in cylindrical
-    // coords (arcing pull-back), ending exactly on the live T2 drift pose.
+    // Camera: the PULL (radius/height/fov) eases in and out via cubicInOut — it
+    // settles to rest, which is correct since T2 holds those constant. The PAN
+    // (azimuth) is the integral of a smoothstep blend of the two drift speeds,
+    // so it is moving at v0 at the start (matching the T1 orbit it continues
+    // from) and v1 at the end (matching the T2 drift it hands to) — the camera
+    // is always gently turning, so the pull flows into the drift with no
+    // stop-then-start.
     const camT = cubicInOut(p);
-    const az = lerp(sp.az, ep.az, camT);
+    const azP = sp.az + TRANSITION_DURATION * (sp.v0 * p + (sp.v1 - sp.v0) * (p * p * p - 0.5 * p * p * p * p));
     const r = lerp(sp.r, ep.r, camT);
     const y = lerp(sp.y, ep.y, camT);
-    camera.position.set(Math.sin(az) * r, y, Math.cos(az) * r);
+    camera.position.set(Math.sin(azP) * r, y, Math.cos(azP) * r);
     camera.lookAt(0, lerp(0, ep.lookAtY, camT), 0);
 
     const fov = lerp(sp.fov, ep.fov, camT);

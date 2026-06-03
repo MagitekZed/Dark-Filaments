@@ -150,11 +150,6 @@ export function MiniPlanet({
 }: MiniPlanetProps) {
   const groupRef = useRef<THREE.Group>(null)
   const meshRef = useRef<THREE.Mesh>(null)
-  const startTime = useMemo(
-    () => (initialAngle / (2 * Math.PI)) * orbitPeriod,
-    [initialAngle, orbitPeriod],
-  )
-  const elapsed = useRef(startTime)
 
   // Stable per-planet seed so each planet's noise sample is different but
   // doesn't reshuffle between renders.
@@ -173,9 +168,16 @@ export function MiniPlanet({
     uSeed:       { value: seed },
   }), [colorA, colorB, colorC, banded, noiseScale, brightness, seed])
 
-  useFrame((_, delta) => {
-    elapsed.current += delta
-    const angle = (elapsed.current / orbitPeriod) * Math.PI * 2
+  useFrame((state) => {
+    // Orbit + spin are computed ABSOLUTELY from the shared canvas clock (which
+    // runs continuously across mount/unmount), NOT a per-instance accumulator —
+    // so a fresh instance that mounts mid-session (the T1→T2 cinematic and the
+    // T2 scene both render their own MiniPlanets) lands on the SAME ongoing
+    // phase instead of snapping back to initialAngle at the hand-off. The
+    // initialAngle phase offset is folded in directly; at t=0 the angle equals
+    // initialAngle, so steady-state motion is unchanged.
+    const t = state.clock.elapsedTime
+    const angle = initialAngle + (t / orbitPeriod) * Math.PI * 2
     if (groupRef.current) {
       const x = Math.cos(angle) * orbitRadius
       const z = Math.sin(angle) * orbitRadius
@@ -185,9 +187,9 @@ export function MiniPlanet({
         Math.cos(inclination) * z,
       )
     }
-    // slow planet rotation — adds a sense of "alive" at zoom-in
+    // slow planet rotation — clock-based so it too is continuous on remount.
     if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.18
+      meshRef.current.rotation.y = t * 0.18
     }
   })
 

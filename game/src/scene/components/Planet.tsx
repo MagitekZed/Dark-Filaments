@@ -423,13 +423,11 @@ export function Planet({
 }: PlanetProps) {
   const orbitRef = useRef<THREE.Group>(null)
   const planetRef = useRef<THREE.Mesh>(null)
-  const angleRef = useRef(initialOrbitAngle)
 
   useEffect(() => {
     if (!boostId) return
     return registerBoostable(boostId)
   }, [boostId])
-  const spinRef = useRef(0)
 
   const starPos = useMemo(() => new THREE.Vector3(0, 0, 0), [])
 
@@ -478,14 +476,22 @@ export function Planet({
     uOpacity:   { value: rings.opacity ?? 0.85 },
   } : null, [rings, starPos, planetRadius])
 
-  useFrame((_, delta) => {
-    angleRef.current += (Math.PI * 2 / orbitPeriod) * delta
-    spinRef.current  += (Math.PI * 2 / rotationPeriod) * delta
+  useFrame((state, delta) => {
+    // Orbit + spin are computed ABSOLUTELY from the shared canvas clock (which
+    // runs continuously across component mount/unmount), NOT from a per-instance
+    // accumulator. So if this Planet is unmounted and a fresh instance remounts
+    // mid-session (e.g. the T1→T2 transition swaps the scene for the cinematic
+    // and back), the new instance lands on the SAME ongoing orbital phase
+    // instead of snapping back to initialOrbitAngle. Steady-state motion is
+    // identical to the old accumulator (at t=0, angle = initialOrbitAngle).
+    const t = state.clock.elapsedTime
+    const angle = initialOrbitAngle + (Math.PI * 2 / orbitPeriod) * t
+    const spin = (Math.PI * 2 / rotationPeriod) * t
     planetUniforms.uTime.value += delta
 
     if (orbitRef.current) {
-      orbitRef.current.position.x = Math.cos(angleRef.current) * orbitRadius
-      orbitRef.current.position.z = Math.sin(angleRef.current) * orbitRadius
+      orbitRef.current.position.x = Math.cos(angle) * orbitRadius
+      orbitRef.current.position.z = Math.sin(angle) * orbitRadius
       // Push the planet's world position into the shader so the ring shadow
       // can do its world-space ray-plane intersection. (Skipped if no rings.)
       if (rings) {
@@ -493,7 +499,7 @@ export function Planet({
       }
     }
     if (planetRef.current) {
-      planetRef.current.rotation.y = spinRef.current
+      planetRef.current.rotation.y = spin
     }
     // Click-boost: 0 when idle, brief positive bump when this planet is
     // the chosen tap target. Wall-clock seconds (NOT clock.elapsedTime

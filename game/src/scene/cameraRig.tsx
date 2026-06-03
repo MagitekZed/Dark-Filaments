@@ -24,6 +24,7 @@ import { OrbitControls } from '@react-three/drei';
 import type { PerspectiveCamera } from 'three';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { useStore } from '../store';
+import { consumeDriftHandoff } from './transitions/cameraHandoff';
 
 // The one true OrbitControls ref type. drei's <OrbitControls> forwards its ref
 // to three-stdlib's OrbitControlsImpl (see drei core/OrbitControls.d.ts), so a
@@ -42,7 +43,11 @@ export function useOrbitControlsRef() {
 // the drift rate to zero over DRIFT_DECAY_MS so a hand-off into OrbitControls
 // (free-orbit) or a transition tween doesn't jolt the camera.
 
-const DRIFT_RAD_PER_SEC = 0.0008;
+// Per-frame the drift advances azimuth by `radPerSec * delta * 60`, so the
+// steady angular velocity is `radPerSec * 60` rad/s. Exported so a transition
+// cinematic can match the drift's pan speed at the hand-off (velocity-continuous,
+// not just position-continuous).
+export const DRIFT_RAD_PER_SEC = 0.0008;
 const DRIFT_DECAY_MS = 1400;
 
 // Default starting azimuth for the curated drift. Shared so a transition
@@ -86,6 +91,16 @@ interface CameraDriftProps {
   framing?: DriftFraming;
   /** Initial azimuth (radians). */
   initialAzimuth?: number;
+  /**
+   * When true, on mount this drift consumes a pending transition hand-off
+   * azimuth (set by the cinematic that just played) and starts its pan from
+   * there instead of `initialAzimuth` — so the camera flows continuously out of
+   * the transition into the drift, no snap and no stop-then-start. If no
+   * hand-off is pending (a normal scene-start mount) it falls back to
+   * `initialAzimuth`. Set this only on the drift for a tier reached via a
+   * transition (CosmicCanvas sets it on the generic post-transition drift).
+   */
+  consumeHandoff?: boolean;
 }
 
 export function CameraDrift({
@@ -93,9 +108,13 @@ export function CameraDrift({
   decayStartMs = null,
   framing: framingOverride,
   initialAzimuth = DEFAULT_DRIFT_AZIMUTH,
+  consumeHandoff = false,
 }: CameraDriftProps) {
   const { camera, size } = useThree();
   const azimuthRef = useRef(initialAzimuth);
+  // Consume the transition hand-off azimuth ONCE, on the first active frame (not
+  // in render — a side effect in the useRef initializer is not StrictMode-safe).
+  const consumedHandoffRef = useRef(false);
   const startedRef = useRef(false);
 
   const framing = useMemo(() => {
@@ -117,6 +136,13 @@ export function CameraDrift({
 
   useFrame((_state, delta) => {
     if (!active) return;
+    // First active frame: if a transition cinematic stashed an end azimuth, pick
+    // up from there (read-and-clear) so the pan continues seamlessly out of it.
+    if (consumeHandoff && !consumedHandoffRef.current) {
+      consumedHandoffRef.current = true;
+      const h = consumeDriftHandoff();
+      if (h != null) azimuthRef.current = h;
+    }
     let rateScale = 1.0;
     if (decayStartMs != null) {
       const elapsed = performance.now() - decayStartMs;

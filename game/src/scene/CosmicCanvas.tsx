@@ -158,7 +158,11 @@ export function CosmicCanvas() {
                 fov={params.cameraFov}
               />
             ) : (
-              <CameraDrift active={!freeOrbit} />
+              // Generic drift for tiers without a curated framing (e.g. T2). When
+              // this tier was reached via a transition cinematic, consumeHandoff
+              // makes the drift pick up the exact azimuth the cinematic ended on,
+              // so the pan flows out of the transition with no snap or stop-start.
+              <CameraDrift active={!freeOrbit} consumeHandoff />
             )}
             <DevOrbitControls />
           </>
